@@ -8,7 +8,8 @@ export const sendChatMessage = async (message, history) => {
        text: m.text
     }));
 
-    const response = await fetch('http://localhost:5000/api/chat', {
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const response = await fetch(`${apiBase}/chat`, {
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },
        body: JSON.stringify({ message, history: trimmedHistory })

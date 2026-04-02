@@ -11,9 +11,21 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+.next
+.nuxt
+.serverless
+.fusebox
+.dynamodb
+.tern-port
+.vercel
 
 # Editor directories and files
-.vscode/*
+.vscode
 !.vscode/extensions.json
 .idea
 .DS_Store

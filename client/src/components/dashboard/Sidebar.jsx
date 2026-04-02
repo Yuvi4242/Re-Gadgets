@@ -9,9 +9,11 @@ import {
   LogOut, Award, Zap
 } from 'lucide-react';
 import { cn } from '../../services/utils';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = ({ role }) => {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const roleNav = {
     customer: [
@@ -20,13 +22,13 @@ const Sidebar = ({ role }) => {
       { name: 'History', path: '/customer/history', icon: Clock },
       { name: 'Reviews', path: '/customer/reviews', icon: Star },
     ],
-    owner: [
+    shopOwner: [
       { name: 'Shop HQ', path: '/shop/dashboard', icon: Store },
       { name: 'Incoming Requests', path: '/shop/requests', icon: ListTodo },
       { name: 'Technicians', path: '/shop/technicians', icon: Users },
       { name: 'Earnings', path: '/shop/earnings', icon: BarChart3 },
     ],
-    worker: [
+    technician: [
       { name: 'My Jobs', path: '/technician/dashboard', icon: Wrench },
       { name: 'Active Repair', path: '/technician/active', icon: Clock },
       { name: 'Completed Logs', path: '/technician/completed', icon: CheckCircle },
@@ -43,7 +45,7 @@ const Sidebar = ({ role }) => {
 
   const getThemeColor = () => {
      if (role === 'admin') return 'rose';
-     if (role === 'worker') return 'amber';
+     if (role === 'technician') return 'amber';
      return 'brandBlue';
   };
 
@@ -70,7 +72,7 @@ const Sidebar = ({ role }) => {
             role === 'worker' ? "text-amber-500" :
             "text-brandBlue"
           )}>
-            {role} Interface
+            {role?.replace('Owner', ' Owner') || 'User'} Interface
           </span>
         </div>
       </div>
@@ -82,7 +84,7 @@ const Sidebar = ({ role }) => {
                <span className="text-xs font-black">AV</span>
             </div>
             <div className="flex-1 min-w-0">
-               <p className="text-sm font-black text-[var(--text-primary)] truncate">Alex Vance</p>
+               <p className="text-sm font-black text-[var(--text-primary)] truncate">{user?.name || 'User'}</p>
                <div className="flex items-center gap-2 mt-0.5">
                   <div className="px-1.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 flex items-center gap-1">
                      <Award className="w-3 h-3 text-amber-500" />
@@ -152,10 +154,13 @@ const Sidebar = ({ role }) => {
            <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
            <span className="font-bold text-sm">Settings</span>
         </Link>
-        <Link to="/auth" className="px-4 py-3 rounded-2xl flex items-center gap-4 text-rose-500/80 hover:text-rose-500 hover:bg-rose-500/10 transition-all group">
+        <button 
+          onClick={logout}
+          className="w-full px-4 py-3 rounded-2xl flex items-center gap-4 text-rose-500/80 hover:text-rose-500 hover:bg-rose-500/10 transition-all group"
+        >
            <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
            <span className="font-bold text-sm">Sign Out</span>
-        </Link>
+        </button>
       </div>
 
     </div>
