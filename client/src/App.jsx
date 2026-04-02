@@ -1,32 +1,59 @@
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import BookService from './pages/BookService';
 import Tracking from './pages/Tracking';
-import AuthPage from './pages/AuthPage.jsx';
-import DashboardLayout from './layouts/DashboardLayout';
-import CustomerDashboard from './pages/dashboards/CustomerDashboard';
-import ShopDashboard from './pages/dashboards/ShopDashboard';
-import TechnicianDashboard from './pages/dashboards/TechnicianDashboard';
-import AdminDashboard from './pages/dashboards/AdminDashboard';
-import Placeholder from './pages/dashboards/Placeholder';
 import ChatBot from './components/chat/ChatBot';
 
+// Auth Pages
+import Signup from './pages/auth/Signup';
+import Login from './pages/auth/Login';
+import CompleteProfile from './pages/auth/CompleteProfile';
+
+// Dashboard Flow
+import PrivateRoute from './components/PrivateRoute';
+import CustomerDashboard from './pages/dashboards/CustomerDashboard';
+import ShopOwnerDashboard from './pages/dashboards/ShopDashboard'; // Matches existing filename
+import TechnicianDashboard from './pages/dashboards/TechnicianDashboard';
+import AdminDashboard from './pages/dashboards/AdminDashboard'; 
+
+import { useAuth } from './context/AuthContext';
+import { Loader2 } from 'lucide-react';
+
 function App() {
+  const { isLoading } = useAuth();
   const location = useLocation();
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full bg-[#020617] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 text-brandPurple animate-spin" />
+        <h2 className="text-xl font-bold text-white tracking-widest uppercase">Initializing Re-Gadgets</h2>
+        <div className="flex space-x-1">
+          <span className="w-2 h-2 bg-brandPurple rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+          <span className="w-2 h-2 bg-brandPurple rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+          <span className="w-2 h-2 bg-brandPurple rounded-full animate-bounce"></span>
+        </div>
+      </div>
+    );
+  }
+
   const isDashboardRoute = location.pathname.startsWith('/customer') || 
-                           location.pathname.startsWith('/shop') || 
+                           location.pathname.startsWith('/shopowner') || 
                            location.pathname.startsWith('/technician') || 
-                           location.pathname.startsWith('/admin');
-  const isAuthLayout = location.pathname.startsWith('/auth');
+                           location.pathname.startsWith('/admin') ||
+                           location.pathname.startsWith('/complete-profile');
+
+  const isAuthLayout = location.pathname === '/login' || 
+                       location.pathname === '/signup';
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 font-sans flex flex-col selection:bg-brandPurple/30 selection:text-white">
       {!isDashboardRoute && !isAuthLayout && <Navbar />}
 
-      {/* Main Content Area */}
       <main className="flex-1 relative flex flex-col h-full w-full">
          <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
@@ -34,45 +61,43 @@ function App() {
                <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
                <Route path="/book" element={<PageWrapper><BookService /></PageWrapper>} />
                <Route path="/tracking" element={<PageWrapper><Tracking /></PageWrapper>} />
-               <Route path="/auth" element={<PageWrapper><AuthPage /></PageWrapper>} />
-
-               {/* Multi-Role Dashboard Routes */}
                
-               {/* CUSTOMER NESTED ROUTES */}
-               <Route path="/customer" element={<PageWrapper><DashboardLayout role="customer" /></PageWrapper>}>
-                  <Route path="dashboard" element={<CustomerDashboard />} />
-                  <Route path="orders" element={<Placeholder title="Active Orders" role="customer" />} />
-                  <Route path="history" element={<Placeholder title="Repair History" role="customer" />} />
-                  <Route path="reviews" element={<Placeholder title="Platform Reviews" role="customer" />} />
+               {/* Auth Routes */}
+               <Route path="/auth" element={<Navigate to="/login" replace />} />
+               <Route path="/signup" element={<PageWrapper><Signup /></PageWrapper>} />
+               <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+               
+               {/* Protected Profile Route */}
+               <Route element={<PrivateRoute />}>
+                  <Route path="/complete-profile" element={<PageWrapper><CompleteProfile /></PageWrapper>} />
                </Route>
 
-               {/* SHOP OWNER NESTED ROUTES */}
-               <Route path="/shop" element={<PageWrapper><DashboardLayout role="owner" /></PageWrapper>}>
-                  <Route path="dashboard" element={<ShopDashboard />} />
-                  <Route path="requests" element={<Placeholder title="Incoming Requests" role="owner" />} />
-                  <Route path="technicians" element={<Placeholder title="Staff Technicians" role="owner" />} />
-                  <Route path="earnings" element={<Placeholder title="Financial Earnings" role="owner" />} />
+               {/* CUSTOMER ROUTES */}
+               <Route element={<PrivateRoute allowedRole="customer" />}>
+                  <Route path="/customer/dashboard" element={<PageWrapper><CustomerDashboard /></PageWrapper>} />
                </Route>
 
-               {/* TECHNICIAN NESTED ROUTES */}
-               <Route path="/technician" element={<PageWrapper><DashboardLayout role="worker" /></PageWrapper>}>
-                  <Route path="dashboard" element={<TechnicianDashboard />} />
-                  <Route path="active" element={<Placeholder title="Active Repair Matrix" role="worker" />} />
-                  <Route path="completed" element={<Placeholder title="Completed Service Logs" role="worker" />} />
+               {/* SHOP OWNER ROUTES */}
+               <Route element={<PrivateRoute allowedRole="shopOwner" />}>
+                  <Route path="/shopowner/dashboard" element={<PageWrapper><ShopOwnerDashboard /></PageWrapper>} />
                </Route>
 
-               {/* ADMIN NESTED ROUTES */}
-               <Route path="/admin" element={<PageWrapper><DashboardLayout role="admin" /></PageWrapper>}>
-                  <Route path="dashboard" element={<AdminDashboard />} />
-                  <Route path="users" element={<Placeholder title="Global User Matrix" role="admin" />} />
-                  <Route path="analytics" element={<Placeholder title="Platform Analytics" role="admin" />} />
-                  <Route path="logs" element={<Placeholder title="Core System Logs" role="admin" />} />
+               {/* TECHNICIAN ROUTES */}
+               <Route element={<PrivateRoute allowedRole="technician" />}>
+                  <Route path="/technician/dashboard" element={<PageWrapper><TechnicianDashboard /></PageWrapper>} />
                </Route>
+
+               {/* ADMIN ROUTES */}
+               <Route element={<PrivateRoute allowedRole="admin" />}>
+                  <Route path="/admin/dashboard" element={<PageWrapper><AdminDashboard /></PageWrapper>} />
+               </Route>
+
+               {/* Catch-all to Home */}
+               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
          </AnimatePresence>
       </main>
 
-      {/* Global AI Assistant */}
       <ChatBot />
     </div>
   );
