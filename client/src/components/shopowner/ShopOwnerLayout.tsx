@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import ThreeBackground from '../dashboard/ThreeBackground';
 import ShopOwnerNavbar from './ShopOwnerNavbar';
 import ShopOwnerSidebar from './ShopOwnerSidebar';
-import AIChatWidget from '../dashboard/AIChatWidget'; // Reuse the AI widget
 
 interface ShopOwnerLayoutProps {
   children: React.ReactNode;
@@ -11,7 +10,6 @@ interface ShopOwnerLayoutProps {
 }
 
 export default function ShopOwnerLayout({ children, activePanel, setActivePanel }: ShopOwnerLayoutProps) {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   return (
@@ -23,8 +21,6 @@ export default function ShopOwnerLayout({ children, activePanel, setActivePanel 
       <div className="flex h-screen pt-20">
         {/* Sidebar */}
         <ShopOwnerSidebar 
-          isExpanded={isSidebarExpanded} 
-          setIsExpanded={setIsSidebarExpanded}
           isMobileOpen={isMobileSidebarOpen}
           setIsMobileOpen={setIsMobileSidebarOpen}
           activePanel={activePanel}
@@ -41,8 +37,6 @@ export default function ShopOwnerLayout({ children, activePanel, setActivePanel 
           </div>
         </main>
       </div>
-
-      <AIChatWidget />
     </div>
   );
 }

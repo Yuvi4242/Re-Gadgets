@@ -15,10 +15,11 @@ import CompleteProfile from './pages/auth/CompleteProfile';
 
 // Dashboard Flow
 import PrivateRoute from './components/PrivateRoute';
-import CustomerDashboard from './pages/dashboards/CustomerDashboard';
-import ShopOwnerDashboard from './pages/dashboards/ShopOwnerDashboard';
-import TechnicianDashboard from './pages/dashboards/TechnicianDashboard';
+import CustomerDashboard from './pages/dashboards/CustomerDashboard.tsx';
+import ShopOwnerDashboard from './pages/dashboards/ShopOwnerDashboard.tsx';
+import TechnicianDashboard from './pages/dashboards/TechnicianDashboard.tsx';
 import AdminDashboard from './pages/dashboards/AdminDashboard'; 
+import TechnicianOnboarding from './pages/onboarding/TechnicianOnboarding';
 
 import { useAuth } from './context/AuthContext';
 import { Loader2 } from 'lucide-react';
@@ -70,6 +71,7 @@ function App() {
                {/* Protected Profile Route */}
                <Route element={<PrivateRoute />}>
                   <Route path="/complete-profile" element={<PageWrapper><CompleteProfile /></PageWrapper>} />
+                  <Route path="/onboarding/technician" element={<PageWrapper><TechnicianOnboarding /></PageWrapper>} />
                </Route>
 
                {/* CUSTOMER ROUTES */}

@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import ThreeBackground from './ThreeBackground';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import AIChatWidget from './AIChatWidget';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   return (
@@ -21,8 +19,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex h-screen pt-20">
         {/* Sidebar */}
         <Sidebar 
-          isExpanded={isSidebarExpanded} 
-          setIsExpanded={setIsSidebarExpanded}
           isMobileOpen={isMobileSidebarOpen}
           setIsMobileOpen={setIsMobileSidebarOpen}
         />
@@ -37,8 +33,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </main>
       </div>
-
-      <AIChatWidget />
     </div>
   );
 }
