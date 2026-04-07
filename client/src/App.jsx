@@ -16,7 +16,7 @@ import CompleteProfile from './pages/auth/CompleteProfile';
 // Dashboard Flow
 import PrivateRoute from './components/PrivateRoute';
 import CustomerDashboard from './pages/dashboards/CustomerDashboard';
-import ShopOwnerDashboard from './pages/dashboards/ShopDashboard'; // Matches existing filename
+import ShopOwnerDashboard from './pages/dashboards/ShopOwnerDashboard';
 import TechnicianDashboard from './pages/dashboards/TechnicianDashboard';
 import AdminDashboard from './pages/dashboards/AdminDashboard'; 
 
