@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
-import ThreeBackground from './ThreeBackground';
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
+import ThreeBackground from '../dashboard/ThreeBackground';
+import ShopOwnerNavbar from './ShopOwnerNavbar';
+import ShopOwnerSidebar from './ShopOwnerSidebar';
 
-interface DashboardLayoutProps {
+interface ShopOwnerLayoutProps {
   children: React.ReactNode;
+  activePanel: string;
+  setActivePanel: (panel: string) => void;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function ShopOwnerLayout({ children, activePanel, setActivePanel }: ShopOwnerLayoutProps) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen w-full bg-[#0a0a1a] text-slate-200 overflow-hidden relative">
       <ThreeBackground />
       
-      <Navbar onMenuToggle={() => setIsMobileSidebarOpen(true)} />
+      <ShopOwnerNavbar onMenuToggle={() => setIsMobileSidebarOpen(true)} />
       
       <div className="flex h-screen pt-20">
         {/* Sidebar */}
-        <Sidebar 
+        <ShopOwnerSidebar 
           isMobileOpen={isMobileSidebarOpen}
           setIsMobileOpen={setIsMobileSidebarOpen}
+          activePanel={activePanel}
+          setActivePanel={setActivePanel}
         />
         
         {/* Main Content Area */}

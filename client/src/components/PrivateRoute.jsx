@@ -20,10 +20,19 @@ const PrivateRoute = ({ allowedRole }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  const isCompleteProfilePath = location.pathname === '/complete-profile';
+  const isWizardPath = location.pathname === '/complete-profile' || location.pathname === '/onboarding/technician';
 
-  if (!user?.isProfileComplete && !isCompleteProfilePath) {
-    return <Navigate to="/complete-profile" replace />;
+  if (!user?.isProfileComplete) {
+    if (user?.role === 'technician' && location.pathname !== '/onboarding/technician') {
+      return <Navigate to="/onboarding/technician" replace />;
+    } else if (user?.role !== 'technician' && location.pathname !== '/complete-profile') {
+      return <Navigate to="/complete-profile" replace />;
+    }
+  }
+
+  // Prevent completed users from viewing onboarding
+  if (user?.isProfileComplete && isWizardPath) {
+     return <Navigate to="/" replace />;
   }
 
   if (allowedRole && user.role !== allowedRole) {

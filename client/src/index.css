@@ -88,4 +88,13 @@
     background: linear-gradient(to right, #1e293b 4%, #334155 25%, #1e293b 36%);
     background-size: 1000px 100%;
   }
+
+  /* Global Scrollbar Removal System */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }
