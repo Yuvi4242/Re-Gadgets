@@ -1,104 +1,131 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Loader2, ArrowRight } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import useAuthStore from '../../store/authStore';
 import { toast } from 'react-hot-toast';
-import PasswordInput from '../../components/auth/PasswordInput';
+import { Loader2, Mail, Lock, LogIn } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
+import { getDashboardRoute } from '../../utils/dashboardRoute';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  
   const navigate = useNavigate();
-  const { api, login } = useAuth();
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [isLoading, setIsLoading] = useState(false);
+  const location = useLocation();
+  const { login, isLoading } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    try {
-      const { data } = await api.post('/auth/login', formData);
-      login(data.token, data.user);
-      
-      if (!data.user.isProfileComplete) {
-        navigate('/complete-profile');
-      } else {
-        const dashboardMap = {
-          customer: '/customer/dashboard',
-          technician: '/technician/dashboard',
-          shopOwner: '/shopowner/dashboard'
-        };
-        navigate(dashboardMap[data.user.role]);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Invalid email or password');
-    } finally {
-      setIsLoading(false);
+    setErrorMsg('');
+    if (!email || !password) {
+      setErrorMsg('Please enter both email and password.');
+      return;
+    }
+
+    const res = await login(email, password);
+    if (res.success) {
+      toast.success('Login successful!');
+      const userRole = useAuthStore.getState().user?.role;
+      const fromPath = location.state?.from?.pathname;
+      const destination = (fromPath && fromPath !== '/') ? fromPath : getDashboardRoute(userRole);
+      navigate(destination, { replace: true });
+    } else {
+      setErrorMsg(res.message || 'Failed to login');
+      toast.error(res.message || 'Failed to login');
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brandPurple/10 rounded-full blur-[150px] -z-0"></div>
-
-      <div className="w-full max-w-md bg-slate-900/40 backdrop-blur-3xl border border-slate-800/50 rounded-3xl p-8 relative z-10 shadow-2xl">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-black text-white tracking-widest uppercase mb-2">
-            RE<span className="text-brandPurple">GADGET</span>
-          </h1>
-          <div className="h-1 w-12 bg-brandPurple mx-auto rounded-full mb-4"></div>
-          <h2 className="text-xl font-bold text-slate-200">Welcome Back</h2>
-          <p className="text-slate-500 text-sm mt-1">Please enter your details to sign in</p>
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] p-4">
+      <div className="max-w-md w-full bg-[#0f172a] rounded-2xl p-8 border border-slate-800 shadow-xl">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+          <p className="text-slate-400">Log in to your Re-Gadgets account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
-            <div className="relative group/input">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within/input:text-brandPurple transition-colors" />
-              <input
-                type="email"
-                required
-                placeholder="email@example.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-[#020617] border border-slate-800 rounded-xl py-3.5 pl-11 pr-4 text-slate-200 outline-none focus:border-brandPurple focus:ring-4 focus:ring-brandPurple/5 transition-all"
+        {errorMsg && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-6 text-sm text-center">
+            {errorMsg}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-[#1e293b] border border-slate-700 text-white rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-brandPurple focus:ring-1 focus:ring-brandPurple transition-colors"
+                placeholder="you@example.com"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1">Password</label>
-            <PasswordInput
-              value={formData.password}
-              placeholder="Your secure password"
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            <div className="flex justify-end">
-              <button type="button" className="text-[10px] uppercase font-bold tracking-widest text-brandPurple hover:underline">Forgot Password?</button>
+          <div>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="block text-sm font-medium text-slate-300">Password</label>
+              <Link to="/forgot-password" className="text-xs text-brandPurple hover:text-brandPurpleLight transition-colors">
+                Forgot password?
+              </Link>
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-[#1e293b] border border-slate-700 text-white rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-brandPurple focus:ring-1 focus:ring-brandPurple transition-colors"
+                placeholder="••••••••"
+              />
             </div>
           </div>
 
-          <button
-            type="submit"
+          <button 
+            type="submit" 
             disabled={isLoading}
-            className="w-full bg-brandPurple hover:bg-brandPurple/90 text-white font-black py-4 rounded-xl shadow-2xl shadow-brandPurple/30 transition-all flex items-center justify-center space-x-3 group active:scale-[0.98]"
+            className="w-full bg-brandPurple hover:bg-brandPurpleLight text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {isLoading ? <Loader2 className="w-6 h-6 animate-spin text-white" /> : (
-              <>
-                <span className="uppercase tracking-[0.2em]">Login Account</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </>
-            )}
+            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
-        <div className="mt-10 text-center">
-          <p className="text-slate-500 text-sm">
-            New to ReGadget?{' '}
-            <Link to="/signup" className="text-brandPurple font-bold hover:underline ml-1">
-              Create Account
-            </Link>
-          </p>
+        <p className="mt-6 text-center text-slate-400 text-sm">
+          Don't have an account?{' '}
+          <Link to="/signup" className="text-brandPurple hover:text-brandPurpleLight font-medium transition-colors">
+            Sign up
+          </Link>
+        </p>
+
+        <div className="mt-6 flex items-center justify-center">
+          <div className="border-t border-slate-700 w-full"></div>
+          <span className="bg-[#0f172a] px-3 text-slate-500 text-sm">or</span>
+          <div className="border-t border-slate-700 w-full"></div>
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              const res = await useAuthStore.getState().loginWithGoogle(credentialResponse.credential);
+              if (res.success) {
+                toast.success('Login with Google successful!');
+                const userRole = useAuthStore.getState().user?.role;
+                const fromPath = location.state?.from?.pathname;
+                const destination = (fromPath && fromPath !== '/') ? fromPath : getDashboardRoute(userRole);
+                navigate(destination, { replace: true });
+              } else {
+                toast.error(res.message || 'Failed to login with Google');
+              }
+            }}
+            onError={() => {
+              toast.error('Google Login Failed');
+            }}
+            theme="filled_black"
+          />
         </div>
       </div>
     </div>

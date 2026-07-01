@@ -4,17 +4,17 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Public signup flow
-router.post('/send-otp', authController.sendOTP);
-router.post('/verify-otp', authController.verifyOTP);
-router.post('/resend-otp', authController.resendOTP);
-router.post('/create-password', authController.createPassword);
-
-// Public login
+router.post('/register', authController.register);
+router.post('/verify-email', authController.verifyEmail);
 router.post('/login', authController.login);
+router.post('/google', authController.googleLogin);
+router.post('/refresh', authController.refresh);
+router.post('/logout', authController.logout);
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
 
 // Protected routes
-router.post('/complete-profile', protect, authController.completeProfile);
 router.get('/me', protect, authController.getMe);
+router.post('/complete-profile', protect, authController.completeProfile);
 
 export default router;

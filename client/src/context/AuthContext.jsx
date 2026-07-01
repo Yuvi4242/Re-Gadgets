@@ -1,70 +1,31 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import React, { createContext, useContext } from 'react';
+import useAuthStore from '../store/authStore';
+import api from '../api/axiosInstance'; // Use the interceptor-configured api
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-// Create axios instance with base URL
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-});
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('regadget_token'));
-  const [isLoading, setIsLoading] = useState(true);
+  const user = useAuthStore(state => state.user);
+  const token = useAuthStore(state => state.accessToken);
+  const isLoading = useAuthStore(state => state.isLoading);
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  
+  const loginStore = useAuthStore(state => state.login);
+  const logoutStore = useAuthStore(state => state.logout);
+  const completeUserProfileStore = useAuthStore(state => state.completeUserProfile);
 
-  const isAuthenticated = !!token;
-
-  // Set auth header whenever token changes
-  useEffect(() => {
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      localStorage.setItem('regadget_token', token);
-    } else {
-      delete api.defaults.headers.common['Authorization'];
-      localStorage.removeItem('regadget_token');
-    }
-  }, [token]);
-
-  const fetchMe = useCallback(async () => {
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
-    try {
-      const { data } = await api.get('/auth/me');
-      setUser(data.user);
-    } catch (error) {
-      console.error('Failed to fetch user:', error);
-      setToken(null);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    fetchMe();
-  }, [fetchMe]);
-
-  const login = (newToken, userData) => {
-    setToken(newToken);
-    setUser(userData);
-    toast.success('Logged in successfully!');
+  const login = async (email, password) => {
+    return await loginStore(email, password);
   };
 
   const logout = () => {
-    setToken(null);
-    setUser(null);
-    toast.success('Logged out successfully');
-    window.location.href = '/login';
+    logoutStore();
   };
 
   const completeUserProfile = (isComplete) => {
-    setUser(prev => ({ ...prev, isProfileComplete: isComplete }));
+    completeUserProfileStore(isComplete);
   };
 
   return (
@@ -77,7 +38,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         completeUserProfile,
-        api, // Exporting api instance for use in components
+        api, 
       }}
     >
       {children}
