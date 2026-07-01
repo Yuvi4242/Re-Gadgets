@@ -22,6 +22,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Main App Routes
@@ -35,12 +36,23 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Re-Gadgets Premium API is running smoothly.' });
 });
 
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // Global Error Handler
 app.use(errorHandler);
 
-// Setup DB connection
-connectDB();
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running optimally on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
-app.listen(PORT, () => {
-  console.log(`Server running optimally on port ${PORT}`);
-});
+startServer();

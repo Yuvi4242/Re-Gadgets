@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/dashboard/Sidebar';
 import TopNavbar from '../components/dashboard/TopNavbar';
+import LiveRepairFeed from '../components/shell/LiveRepairFeed';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorBoundary from '../components/ErrorBoundary';
 
@@ -28,8 +29,15 @@ const DashboardLayout = () => {
     <ErrorBoundary>
       <div className="flex h-screen w-full bg-[var(--bg-primary)] overflow-hidden font-sans transition-colors duration-300">
        
-       {/* Left Sidebar Layout Engine */}
-       <Sidebar role={role} />
+       {/* Left Split-Monolith Shell (Sidebar + Live Feed) */}
+       <div className="w-72 h-full flex flex-col shrink-0 border-r border-[var(--border-primary)] bg-[var(--bg-primary)] z-20">
+          <div className="flex-shrink-0 flex flex-col max-h-[60%]">
+             <Sidebar role={role} />
+          </div>
+          <div className="flex-1 overflow-hidden min-h-0">
+             <LiveRepairFeed role={role} />
+          </div>
+       </div>
 
        {/* Main Work Area */}
        <div className="flex-1 flex flex-col h-full overflow-hidden relative">

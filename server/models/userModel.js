@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['customer', 'technician', 'shopOwner'],
+      enum: ['customer', 'technician', 'shopOwner', 'admin'],
       required: [true, 'Please specify a role'],
     },
     isVerified: {
@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    otp: String,
+    otpExpiry: Date,
+    resetPasswordToken: String,
+    resetPasswordExpiry: Date,
+    refreshToken: String,
     createdAt: {
       type: Date,
       default: Date.now,

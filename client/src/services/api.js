@@ -22,6 +22,7 @@ export const authAPI = {
   verifyOtp: (data) => api.post('/auth/verify-otp', data),
   createPassword: (data) => api.post('/auth/create-password', data),
   login: (data) => api.post('/auth/login', data),
+  googleLogin: (data) => api.post('/auth/google', data),
 };
 
 export default api;

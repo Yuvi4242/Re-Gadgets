@@ -1,80 +1,63 @@
 import axios from 'axios';
+import useAuthStore from '../store/authStore.js';
 
 const api = axios.create({
-  baseURL: '/api',
-  withCredentials: true, // Send cookies globally
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  withCredentials: true, // IMPORTANT for sending httpOnly cookies (refreshToken)
 });
 
-let currentAccessToken = null;
-
-export const setAccessToken = (token) => {
-  currentAccessToken = token;
-};
-
-export const getAccessToken = () => currentAccessToken;
-
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
-    if (currentAccessToken) {
-      config.headers['Authorization'] = `Bearer ${currentAccessToken}`;
+    const token = useAuthStore.getState().accessToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-let isRefreshing = false;
-let failedQueue = [];
+// Response interceptor
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-};
+    // If 401 and we haven't retried yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-export const setupInterceptors = (refreshSession, logout) => {
-  api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      const originalRequest = error.config;
-
-      if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh-token') {
-        if (isRefreshing) {
-          return new Promise(function(resolve, reject) {
-            failedQueue.push({ resolve, reject });
-          }).then(token => {
-            originalRequest.headers['Authorization'] = 'Bearer ' + token;
-            return api(originalRequest);
-          }).catch(err => {
-            return Promise.reject(err);
-          });
-        }
-
-        originalRequest._retry = true;
-        isRefreshing = true;
-
-        try {
-          const newAccessToken = await refreshSession();
-          isRefreshing = false;
-          processQueue(null, newAccessToken);
-          
-          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-          return api(originalRequest);
-        } catch (refreshError) {
-          isRefreshing = false;
-          processQueue(refreshError, null);
-          logout();
-          return Promise.reject(refreshError);
-        }
+      // Avoid infinite loops if the refresh endpoint itself returns 401
+      if (originalRequest.url === '/auth/refresh' || originalRequest.url === '/auth/login') {
+        useAuthStore.getState().logout();
+        return Promise.reject(error);
       }
-      return Promise.reject(error);
+
+      try {
+        const response = await axios.post(
+          `${api.defaults.baseURL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        const newAccessToken = response.data.accessToken;
+        
+        // Update store with new token
+        useAuthStore.getState().setToken(newAccessToken);
+        
+        // Update header and retry request
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.error('Silent refresh failed:', refreshError);
+        useAuthStore.getState().logout();
+        return Promise.reject(refreshError);
+      }
     }
-  );
-};
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;

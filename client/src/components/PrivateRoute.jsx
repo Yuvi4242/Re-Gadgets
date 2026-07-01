@@ -1,10 +1,11 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import useAuthStore from '../store/authStore';
 import { Loader2 } from 'lucide-react';
+import { getDashboardRoute } from '../utils/dashboardRoute';
 
-const PrivateRoute = ({ allowedRole }) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+const PrivateRoute = ({ allowedRole, roles }) => {
+  const { user, isAuthenticated, isLoading } = useAuthStore();
   const location = useLocation();
 
   if (isLoading) {
@@ -22,6 +23,7 @@ const PrivateRoute = ({ allowedRole }) => {
 
   const isWizardPath = location.pathname === '/complete-profile' || location.pathname === '/onboarding/technician';
 
+  // If profile not complete, gate access to wizard pages
   if (!user?.isProfileComplete) {
     if (user?.role === 'technician' && location.pathname !== '/onboarding/technician') {
       return <Navigate to="/onboarding/technician" replace />;
@@ -30,13 +32,19 @@ const PrivateRoute = ({ allowedRole }) => {
     }
   }
 
-  // Prevent completed users from viewing onboarding
+  // Prevent completed users from viewing onboarding — send them to their correct dashboard
   if (user?.isProfileComplete && isWizardPath) {
-     return <Navigate to="/" replace />;
+    return <Navigate to={getDashboardRoute(user.role)} replace />;
   }
 
-  if (allowedRole && user.role !== allowedRole) {
-    return <Navigate to="/" replace />;
+  // Role-based access guard
+  if (allowedRole && user?.role !== allowedRole) {
+    // Redirect to their own dashboard, not home
+    return <Navigate to={getDashboardRoute(user.role)} replace />;
+  }
+
+  if (roles && roles.length > 0 && !roles.includes(user?.role)) {
+    return <Navigate to={getDashboardRoute(user.role)} replace />;
   }
 
   return <Outlet />;

@@ -11,22 +11,30 @@ import ChatBot from './components/chat/ChatBot';
 // Auth Pages
 import Signup from './pages/auth/Signup';
 import Login from './pages/auth/Login';
+import VerifyEmail from './pages/auth/VerifyEmail';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import CompleteProfile from './pages/auth/CompleteProfile';
 
 // Dashboard Flow
 import PrivateRoute from './components/PrivateRoute';
+import DashboardLayout from './layouts/DashboardLayout';
 import CustomerDashboard from './pages/dashboards/CustomerDashboard.tsx';
 import ShopOwnerDashboard from './pages/dashboards/ShopOwnerDashboard.tsx';
 import TechnicianDashboard from './pages/dashboards/TechnicianDashboard.tsx';
 import AdminDashboard from './pages/dashboards/AdminDashboard'; 
 import TechnicianOnboarding from './pages/onboarding/TechnicianOnboarding';
 
-import { useAuth } from './context/AuthContext';
+import useAuthStore from './store/authStore';
 import { Loader2 } from 'lucide-react';
 
 function App() {
-  const { isLoading } = useAuth();
+  const { isLoading, loadUser } = useAuthStore();
   const location = useLocation();
+
+  React.useEffect(() => {
+    loadUser();
+  }, [loadUser]);
 
   if (isLoading) {
     return (
@@ -49,7 +57,10 @@ function App() {
                            location.pathname.startsWith('/complete-profile');
 
   const isAuthLayout = location.pathname === '/login' || 
-                       location.pathname === '/signup';
+                       location.pathname === '/signup' ||
+                       location.pathname === '/verify-email' ||
+                       location.pathname === '/forgot-password' ||
+                       location.pathname === '/reset-password';
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 font-sans flex flex-col selection:bg-brandPurple/30 selection:text-white">
@@ -67,6 +78,9 @@ function App() {
                <Route path="/auth" element={<Navigate to="/login" replace />} />
                <Route path="/signup" element={<PageWrapper><Signup /></PageWrapper>} />
                <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+               <Route path="/verify-email" element={<PageWrapper><VerifyEmail /></PageWrapper>} />
+               <Route path="/forgot-password" element={<PageWrapper><ForgotPassword /></PageWrapper>} />
+               <Route path="/reset-password" element={<PageWrapper><ResetPassword /></PageWrapper>} />
                
                {/* Protected Profile Route */}
                <Route element={<PrivateRoute />}>
@@ -74,19 +88,22 @@ function App() {
                   <Route path="/onboarding/technician" element={<PageWrapper><TechnicianOnboarding /></PageWrapper>} />
                </Route>
 
-               {/* CUSTOMER ROUTES */}
-               <Route element={<PrivateRoute allowedRole="customer" />}>
-                  <Route path="/customer/dashboard" element={<PageWrapper><CustomerDashboard /></PageWrapper>} />
-               </Route>
+               {/* DASHBOARDS - SHARED SHELL */}
+               <Route element={<DashboardLayout />}>
+                  {/* CUSTOMER ROUTES */}
+                  <Route element={<PrivateRoute allowedRole="customer" />}>
+                     <Route path="/customer/dashboard" element={<PageWrapper><CustomerDashboard /></PageWrapper>} />
+                  </Route>
 
-               {/* SHOP OWNER ROUTES */}
-               <Route element={<PrivateRoute allowedRole="shopOwner" />}>
-                  <Route path="/shopowner/dashboard" element={<PageWrapper><ShopOwnerDashboard /></PageWrapper>} />
-               </Route>
+                  {/* SHOP OWNER ROUTES */}
+                  <Route element={<PrivateRoute allowedRole="shopOwner" />}>
+                     <Route path="/shopowner/dashboard" element={<PageWrapper><ShopOwnerDashboard /></PageWrapper>} />
+                  </Route>
 
-               {/* TECHNICIAN ROUTES */}
-               <Route element={<PrivateRoute allowedRole="technician" />}>
-                  <Route path="/technician/dashboard" element={<PageWrapper><TechnicianDashboard /></PageWrapper>} />
+                  {/* TECHNICIAN ROUTES */}
+                  <Route element={<PrivateRoute allowedRole="technician" />}>
+                     <Route path="/technician/dashboard" element={<PageWrapper><TechnicianDashboard /></PageWrapper>} />
+                  </Route>
                </Route>
 
                {/* ADMIN ROUTES */}

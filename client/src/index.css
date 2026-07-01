@@ -5,7 +5,20 @@
   --color-brandPurple: #8b5cf6;
   --color-brandIndigo: #6366f1;
   
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  /* Noir & Ember Palette */
+  --color-noir-base: #0A0A0C;
+  --color-noir-surface: #111216;
+  --color-noir-surface-elevated: #17181D;
+  --color-noir-surface-high: #1D1E24;
+  
+  --color-ember-light: #F5A623;
+  --color-ember-dark: #FF7A45;
+  
+  --color-status-cool: #6366f1;
+  --color-status-teal: #14b8a6;
+  
+  --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-display: "Sora", system-ui, -apple-system, sans-serif;
   
   --animate-gradient-x: gradient-x 15s ease infinite;
   --animate-float: float 6s ease-in-out infinite;
@@ -30,8 +43,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-  50% { opacity: .8; transform: scale(1.02); box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.4); }
+  50% { opacity: .8; transform: scale(1.02); box-shadow: 0 0 0 15px rgba(245, 166, 35, 0); }
 }
 
 @keyframes shimmer {
@@ -41,54 +54,62 @@
 
 @layer base {
   :root {
-    --bg-primary: #f8fafc;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --border-primary: rgba(226, 232, 240, 0.8);
-    --glass-bg: rgba(255, 255, 255, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.4);
-    --card-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.05);
-  }
-
-  .dark {
-    --bg-primary: #020617;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --border-primary: rgba(30, 41, 59, 0.8);
-    --glass-bg: rgba(15, 23, 42, 0.7);
+    --bg-primary: #0A0A0C;
+    --text-primary: #ffffff;
+    --text-secondary: #a1a1aa;
+    --border-primary: rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(17, 18, 22, 0.7);
     --glass-border: rgba(255, 255, 255, 0.08);
-    --card-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.5);
+    --card-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
   }
 
   body {
-    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300;
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans transition-colors duration-300;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
   }
 }
 
 @layer utilities {
   .glass {
     background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border: 1px solid var(--glass-border);
     box-shadow: var(--card-shadow);
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brandBlue to-brandPurple;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-ember-light)] to-[var(--color-ember-dark)];
+  }
+
+  .bg-dot-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  
+  .bg-film-grain {
+    position: relative;
+  }
+  
+  .bg-film-grain::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
   }
 
   .shimmer-loader {
-    background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+    background: linear-gradient(to right, #111216 4%, #1D1E24 25%, #111216 36%);
     background-size: 1000px 100%;
     animation: shimmer 2s linear infinite;
   }
   
-  .dark .shimmer-loader {
-    background: linear-gradient(to right, #1e293b 4%, #334155 25%, #1e293b 36%);
-    background-size: 1000px 100%;
-  }
-
   /* Global Scrollbar Removal System */
   .no-scrollbar::-webkit-scrollbar {
     display: none;

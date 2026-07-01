@@ -28,13 +28,13 @@ export default function CustomerDashboard() {
   }, [fullGreeting]);
 
   return (
-    <DashboardLayout>
+    <div className="w-full h-full relative z-10 px-8 lg:px-12 py-8">
       <div className="w-full max-w-7xl mx-auto space-y-8">
         
         {/* Welcome Hero Strip */}
         <section className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 pt-4">
           <div>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight h-10">
+            <h1 className="text-4xl font-extrabold text-[var(--text-primary)] tracking-tight h-10">
               {greeting}
               <span className="animate-[pulse_1s_infinite] ml-1">|</span>
             </h1>
@@ -42,7 +42,7 @@ export default function CustomerDashboard() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.5, duration: 1 }}
-              className="text-slate-400 font-medium mt-2"
+              className="text-[var(--text-secondary)] font-medium mt-2"
             >
               Your personal GadgetFix command center.
             </motion.p>
@@ -54,7 +54,7 @@ export default function CustomerDashboard() {
             transition={{ delay: 0.5 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
-            className="group relative overflow-hidden bg-brandPurple text-white px-8 py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(124,58,237,0.4)] transition-all flex items-center gap-2"
+            className="group relative overflow-hidden bg-[var(--color-ember-light)] text-[var(--color-noir-base)] px-8 py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(245,166,35,0.2)] transition-all flex items-center gap-2"
           >
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
             <Activity className="w-5 h-5 relative z-10" />
@@ -73,28 +73,28 @@ export default function CustomerDashboard() {
               className="relative z-10 mb-8"
             >
               <div className="relative p-[1px] rounded-2xl overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-brandPurple via-cyan-400 to-brandPurple animate-[shimmer_3s_linear_infinite] bg-[length:200%_100%]" />
-                <div className="relative bg-[#0a0a1a]/90 backdrop-blur-xl rounded-[15px] p-5 flex flex-col md:flex-row items-start md:items-center gap-4">
-                  <div className="p-3 bg-brandPurple/20 rounded-xl relative shadow-[0_0_15px_rgba(124,58,237,0.3)] shrink-0">
-                    <Sparkles className="w-6 h-6 text-brandPurple animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-ember-dark)] via-[var(--color-ember-light)] to-[var(--color-ember-dark)] animate-[shimmer_3s_linear_infinite] bg-[length:200%_100%]" />
+                <div className="relative bg-[var(--color-noir-surface-high)]/90 backdrop-blur-xl rounded-[15px] p-5 flex flex-col md:flex-row items-start md:items-center gap-4">
+                  <div className="p-3 bg-[var(--color-ember-light)]/20 rounded-xl relative shadow-[0_0_15px_rgba(245,166,35,0.15)] shrink-0">
+                    <Sparkles className="w-6 h-6 text-[var(--color-ember-light)] animate-pulse" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-white font-bold flex items-center gap-2">
+                    <h3 className="text-[var(--text-primary)] font-bold flex items-center gap-2">
                       Smart Diagnostic Alert
-                      <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded border border-brandPurple/30 text-brandPurple bg-brandPurple/10 tracking-widest">AI Agent</span>
+                      <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded border border-[var(--color-ember-light)]/30 text-[var(--color-ember-light)] bg-[var(--color-ember-light)]/10 tracking-widest">AI Agent</span>
                     </h3>
-                    <p className="text-sm text-slate-300 mt-1">We noticed your iPhone 14 Pro's battery health has degraded to 79%. Consider replacing it soon.</p>
+                    <p className="text-sm text-[var(--text-secondary)] mt-1">We noticed your iPhone 14 Pro's battery health has degraded to 79%. Consider replacing it soon.</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0 self-end md:self-auto mt-4 md:mt-0">
                     <button 
-                      className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl border border-white/10 transition-colors"
+                      className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white text-sm font-semibold rounded-xl border border-[var(--border-primary)] transition-colors"
                       onClick={() => alert('Opening fake diagnostic chart modal...')}
                     >
                       Check Battery Health
                     </button>
                     <button 
                       onClick={() => setShowAIAlert(false)}
-                      className="p-2.5 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
+                      className="p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--color-noir-surface)] hover:bg-[var(--color-noir-surface-elevated)] rounded-xl transition-colors border border-[var(--border-primary)]"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -116,8 +116,8 @@ export default function CustomerDashboard() {
             {/* Recent Activity Feed */}
             <div className="relative z-10 w-full pt-4">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">Recent Activity</h2>
-                <button className="text-sm text-brandPurple hover:text-cyan-400 flex items-center gap-1 transition-colors">
+                <h2 className="text-xl font-bold text-[var(--text-primary)]">Recent Activity</h2>
+                <button className="text-sm text-[var(--color-ember-light)] hover:text-[var(--color-ember-dark)] flex items-center gap-1 transition-colors">
                   View All <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -132,10 +132,10 @@ export default function CustomerDashboard() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + i * 0.1 }}
-                    className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors flex items-center justify-between text-sm group"
+                    className="p-4 rounded-xl bg-[var(--color-noir-surface)] border border-[var(--border-primary)] hover:bg-[var(--color-noir-surface-elevated)] transition-colors flex items-center justify-between text-sm group"
                   >
-                    <span className="text-white group-hover:text-cyan-300 transition-colors">{act.text}</span>
-                    <span className="text-slate-500">{act.time}</span>
+                    <span className="text-[var(--text-primary)] group-hover:text-[var(--color-ember-light)] transition-colors">{act.text}</span>
+                    <span className="text-[var(--text-secondary)]">{act.time}</span>
                   </motion.div>
                 ))}
               </div>
@@ -147,17 +147,7 @@ export default function CustomerDashboard() {
             <RepairTimeline />
           </div>
         </div>
-
       </div>
-
-      {/* Subtle Grid Background for Main Area */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0" 
-        style={{
-          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
-    </DashboardLayout>
+    </div>
   );
 }

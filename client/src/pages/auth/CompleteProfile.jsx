@@ -5,22 +5,19 @@ import { useAuth } from '../../context/AuthContext';
 import CustomerProfileForm from '../../components/auth/CustomerProfileForm';
 import TechnicianProfileForm from '../../components/auth/TechnicianProfileForm';
 import ShopOwnerProfileForm from '../../components/auth/ShopOwnerProfileForm';
+import { toast } from 'react-hot-toast';
+import { getDashboardRoute } from '../../utils/dashboardRoute';
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, completeUserProfile, api } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !user) {
       navigate('/login');
     }
     if (!isLoading && user?.isProfileComplete) {
-       const dashboardMap = {
-          customer: '/customer/dashboard',
-          technician: '/technician/dashboard',
-          shopOwner: '/shopowner/dashboard'
-        };
-        navigate(dashboardMap[user.role]);
+      navigate(getDashboardRoute(user.role));
     }
   }, [user, isLoading, navigate]);
 
@@ -34,14 +31,7 @@ const CompleteProfile = () => {
   }
 
   const renderForm = () => {
-    const onSuccess = () => {
-       const dashboardMap = {
-          customer: '/customer/dashboard',
-          technician: '/technician/dashboard',
-          shopOwner: '/shopowner/dashboard'
-        };
-        navigate(dashboardMap[user.role]);
-    };
+    const onSuccess = () => navigate(getDashboardRoute(user.role));
 
     switch (user.role) {
       case 'customer':
@@ -52,6 +42,17 @@ const CompleteProfile = () => {
         return <ShopOwnerProfileForm onSuccess={onSuccess} />;
       default:
         return <p className="text-red-500 text-center font-bold">Invalid user role detected.</p>;
+    }
+  };
+
+  const handleSkip = async () => {
+    try {
+      await api.post('/auth/complete-profile', { skip: true });
+      completeUserProfile(true);
+      toast.success('Profile setup skipped.');
+      navigate(getDashboardRoute(user.role));
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to skip profile setup');
     }
   };
 
@@ -93,6 +94,12 @@ const CompleteProfile = () => {
 
         <div className="bg-slate-950/50 rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-inner">
            {renderForm()}
+           <button 
+             onClick={handleSkip} 
+             className="w-full mt-4 bg-transparent border border-slate-700 text-slate-400 font-bold py-3 rounded-lg hover:bg-slate-800 hover:text-white transition-all flex items-center justify-center group"
+           >
+             Skip for now <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+           </button>
         </div>
 
         <div className="mt-8 flex items-center justify-center space-x-3 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-slate-600">

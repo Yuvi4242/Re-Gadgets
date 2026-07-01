@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 import OTP from '../models/otpModel.js';
 
 dotenv.config();
@@ -49,4 +49,20 @@ export const sendOTPEmail = async (toEmail, otp) => {
 
   // Send email
   return transporter.sendMail(mailOptions);
+};
+
+export const sendEmail = async (to, subject, html) => {
+  const mailOptions = {
+    from: `"ReGadget Support" <${process.env.GMAIL_USER}>`,
+    to,
+    subject,
+    html
+  };
+
+  if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    return await transporter.sendMail(mailOptions);
+  } else {
+    console.error('Email service not configured. Missing GMAIL_USER or GMAIL_APP_PASSWORD');
+    return null;
+  }
 };

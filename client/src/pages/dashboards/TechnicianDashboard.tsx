@@ -57,29 +57,18 @@ export default function TechnicianDashboard() {
   };
 
   return (
-    <TechnicianLayout activePanel={activePanel} setActivePanel={setActivePanel}>
-      <div className="w-full max-w-[1600px] mx-auto space-y-8 relative z-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activePanel}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
-          >
-            {renderPanel()}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Subtle Grid Background for Main Area (Inherited from Customer UI style) */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0" 
-        style={{
-          backgroundImage: `linear-gradient(rgba(6, 182, 212, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.02) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
-    </TechnicianLayout>
+    <div className="w-full h-full relative z-10 px-8 lg:px-12 py-8">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activePanel}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -15 }}
+          transition={{ duration: 0.3 }}
+        >
+          {renderPanel()}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }

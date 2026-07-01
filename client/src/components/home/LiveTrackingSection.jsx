@@ -4,10 +4,10 @@ import { MapPin, Navigation, Navigation2, CheckCircle2 } from 'lucide-react';
 
 const LiveTrackingSection = () => {
   return (
-    <section className="py-24 relative bg-[#020617] overflow-hidden border-t border-white/5">
-      <div className="absolute left-[-10%] top-[20%] w-[40%] h-[60%] bg-blue-500/10 blur-[150px] mix-blend-screen pointer-events-none"></div>
+    <section className="py-24 relative bg-[var(--bg-primary)] bg-film-grain bg-dot-grid overflow-hidden border-t border-[var(--border-primary)]">
+      <div className="absolute left-[-10%] top-[20%] w-[40%] h-[60%] bg-[var(--color-ember-dark)]/10 blur-[150px] mix-blend-screen pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-8 lg:px-12">
         <div className="flex flex-col lg:flex-row items-center gap-16">
           
           {/* Left: Text Content */}
