@@ -7,12 +7,10 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        brandBlue: '#3b82f6',
-        brandPurple: '#8b5cf6',
-      },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans:    ['Manrope', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Sora',    'system-ui', '-apple-system', 'sans-serif'],
+        mono:    ['ui-monospace', 'JetBrains Mono', 'Fira Code', 'monospace'],
       },
     },
   },

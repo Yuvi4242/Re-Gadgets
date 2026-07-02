@@ -51,7 +51,7 @@ export default function OrdersTable() {
       case 'Pending':
         return <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 text-xs font-bold flex items-center gap-1.5"><Circle className="w-2 h-2 fill-current animate-pulse" /> Pending</span>;
       case 'In Progress':
-        return <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold flex items-center gap-1.5"><Circle className="w-2 h-2 fill-current animate-pulse" /> In Progress</span>;
+        return <span className="px-2.5 py-1 rounded-full bg-ember/10 text-ember border border-ember/20 text-xs font-bold flex items-center gap-1.5"><Circle className="w-2 h-2 fill-current animate-pulse" /> In Progress</span>;
       case 'Completed':
         return <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-xs font-bold flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3" /> Completed</span>;
       default:
@@ -75,7 +75,7 @@ export default function OrdersTable() {
 
   return (
     <>
-      <div className="bg-[#0a0a1a]/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 lg:p-8 flex flex-col min-h-[500px]">
+      <div className="bg-elevated/40 backdrop-blur-xl border border-border rounded-2xl p-6 lg:p-8 flex flex-col min-h-[500px]">
         {/* Header Area */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div>
