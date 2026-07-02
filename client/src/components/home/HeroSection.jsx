@@ -1,194 +1,195 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Wrench, ShieldCheck, MapPin, Smartphone, Star } from 'lucide-react';
+import { ArrowRight, MapPin, Star } from 'lucide-react';
+
+const WORKBENCH = '/images/hero-workbench.jpg';
 
 const HeroSection = () => {
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden bg-[var(--bg-primary)] bg-film-grain bg-dot-grid perspective-1000">
-      
-      {/* Immersive Animated Background Glow */}
-      <motion.div 
-        animate={{ scale: [1, 1.05, 1], opacity: [0.1, 0.15, 0.1] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-10%] left-[-10%] w-[50%] h-[60%] bg-[var(--color-ember-light)] blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-[oklch(0.14_0.005_260)] dot-grid-bg">
+
+      {/* ── Ambient background ─────────────────────────────── */}
+      <motion.div
+        animate={{ scale: [1, 1.06, 1], opacity: [0.07, 0.13, 0.07] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute -top-60 -left-20 w-[700px] h-[700px] rounded-full blur-[180px] pointer-events-none"
+        style={{ background: 'oklch(0.72 0.16 40)' }}
       />
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1], opacity: [0.05, 0.1, 0.05] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-[-10%] right-[-5%] w-[45%] h-[55%] bg-[var(--color-ember-dark)] blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"
+      <motion.div
+        animate={{ scale: [1, 1.08, 1], opacity: [0.04, 0.08, 0.04] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full blur-[160px] pointer-events-none"
+        style={{ background: 'oklch(0.65 0.19 35)' }}
       />
 
-      <div className="max-w-7xl mx-auto px-8 lg:px-12 relative z-10 w-full">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8">
-          
-          {/* Left Hero Content */}
-          <motion.div 
+      <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 w-full relative z-10 py-24 md:py-32">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-16 lg:gap-8">
+
+          {/* ── LEFT HERO CONTENT ──────────────────────────── */}
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full lg:w-1/2 text-center lg:text-left"
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="w-full lg:w-[52%] text-left animate-in-up"
           >
-            <motion.div 
-               initial={{ opacity: 0, scale: 0.9 }}
-               animate={{ opacity: 1, scale: 1 }}
-               transition={{ delay: 0.3, duration: 0.5 }}
-               className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-[var(--color-noir-surface-elevated)] border border-[var(--border-primary)] shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur-md mb-6"
+            {/* Pill badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-[oklch(0.65_0.19_35/0.1)] border border-[oklch(0.65_0.19_35/0.4)] mb-8 shadow-[0_0_20px_oklch(0.65_0.19_35/0.15)]"
             >
-              <div className="w-2 h-2 rounded-full bg-[var(--color-ember-light)] animate-pulse shadow-[0_0_10px_var(--color-ember-light)]"></div>
-              <span className="text-[var(--text-primary)] font-semibold text-xs tracking-wider uppercase">AI-Powered Tech Repair</span>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[oklch(0.65_0.19_35)] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[oklch(0.65_0.19_35)]" />
+              </span>
+              <span className="font-mono text-[11px] font-bold tracking-[0.18em] uppercase text-[oklch(0.65_0.19_35)]">
+                Certified Technicians On-Call
+              </span>
             </motion.div>
-            
-            <h1 className="text-[40px] md:text-[60px] font-extrabold tracking-tighter text-[var(--text-primary)] mb-5 leading-[1.05]">
-              Repair Your Gadgets <br className="hidden md:block"/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-ember-light)] to-[var(--color-ember-dark)]">
-                At Your Doorstep
+
+            {/* Headline */}
+            <h1 className="font-display font-extrabold text-5xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tight text-[oklch(0.96_0.005_260)] mb-6">
+              Repair Your<br />
+              Gadgets{' '}
+              <span className="text-[oklch(0.78_0.16_75)]">
+                At Your<br />Doorstep.
               </span>
             </h1>
-            
-            <p className="text-lg text-[var(--text-secondary)] mb-8 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
-              Fast, reliable, and intelligent repair services. Our AI instantly diagnostics issues and matches you with verified local master technicians.
+
+            {/* Subheadline */}
+            <p className="text-lg text-[oklch(0.65_0.01_260)] font-medium leading-relaxed max-w-xl mb-10">
+              AI-powered diagnostics, verified technicians, and real-time tracking — all from one premium platform.
             </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Link to="/book" className="w-full sm:w-auto">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full px-8 py-4 bg-gradient-to-r from-[var(--color-ember-light)] to-[var(--color-ember-dark)] text-white rounded-full font-bold text-lg shadow-[0_0_30px_-5px_rgba(245,166,35,0.4)] hover:shadow-[0_0_50px_0px_rgba(255,122,69,0.5)] transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-start gap-4 mb-12">
+              <Link to="/book">
+                <motion.button
+                  whileHover={{ brightness: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="group relative overflow-hidden flex items-center gap-2 px-7 py-4 rounded-full bg-[oklch(0.65_0.19_35)] text-[oklch(0.98_0_0)] font-bold text-base shadow-[0_0_30px_oklch(0.65_0.19_35/0.4)] hover:shadow-[0_0_45px_oklch(0.65_0.19_35/0.55)] transition-all duration-300"
                 >
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
-                  <span className="relative z-10 hidden sm:inline">Book a Repair</span>
-                  <span className="relative z-10 sm:hidden">Book Now</span>
-                  <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+                  <span className="relative z-10">Book a Repair</span>
+                  <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 </motion.button>
               </Link>
-              <Link to="/tracking" className="w-full sm:w-auto">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full px-8 py-4 bg-slate-900/50 backdrop-blur-xl text-slate-200 border border-white/10 rounded-full font-bold text-lg hover:bg-slate-800 transition-colors flex items-center justify-center group"
+              <Link to="/tracking">
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex items-center gap-2 px-7 py-4 rounded-full bg-[oklch(0.18_0.006_260)] text-[oklch(0.96_0.005_260)] font-bold text-base border border-[oklch(0.28_0.008_260/0.7)] hover:border-[oklch(0.65_0.19_35/0.4)] hover:bg-[oklch(0.22_0.006_260)] transition-all duration-300"
                 >
-                  <MapPin className="w-5 h-5 mr-2 text-slate-400 group-hover:text-white transition-colors" />
+                  <MapPin className="w-4 h-4 text-[oklch(0.65_0.01_260)]" />
                   Track Order
                 </motion.button>
               </Link>
             </div>
-            
-            <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               transition={{ delay: 0.8 }}
-               className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-slate-400 font-semibold text-sm"
+
+            {/* Social proof */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="flex items-center gap-6"
             >
-              <div className="flex flex-col items-start gap-1">
-                <div className="flex text-amber-400">
-                  <Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/>
+              <div>
+                <div className="flex text-[oklch(0.78_0.16_75)] mb-1">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
                 </div>
-                <span>4.9/5 from 10k+ users</span>
+                <p className="text-xs font-bold text-[oklch(0.65_0.01_260)]">4.9 · 12k+ repairs</p>
               </div>
-              <div className="w-px h-10 bg-white/10"></div>
-              <div className="flex flex-col items-start gap-1">
-                <span className="text-white font-bold text-lg leading-none">500+</span>
-                <span className="text-slate-500">Verified Shops</span>
+              <div className="w-px h-8 bg-[oklch(0.28_0.008_260/0.5)]" />
+              <div>
+                <p className="font-display font-bold text-lg text-[oklch(0.96_0.005_260)] leading-none">500+</p>
+                <p className="text-xs text-[oklch(0.65_0.01_260)] mt-0.5">Verified Shops</p>
+              </div>
+              <div className="w-px h-8 bg-[oklch(0.28_0.008_260/0.5)]" />
+              <div>
+                <p className="font-display font-bold text-lg text-[oklch(0.96_0.005_260)] leading-none">24/7</p>
+                <p className="text-xs text-[oklch(0.65_0.01_260)] mt-0.5">Support</p>
               </div>
             </motion.div>
           </motion.div>
-          
-          {/* Right Floating Elements (Apple/Stripe/Linear blend) */}
-          <div className="w-full lg:w-1/2 relative h-[500px] lg:h-[650px] hidden md:block select-none">
-            {/* Main Interactive Status Card */}
-            <motion.div 
-              animate={{ y: ["-10px", "10px"] }}
-              transition={{ duration: 4, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-              className="absolute top-[20%] left-[10%] w-[340px] glass rounded-3xl p-6 z-30"
+
+          {/* ── RIGHT HERO VISUAL — 3 overlapping cards ──────── */}
+          <div className="w-full lg:w-[48%] relative h-[520px] hidden md:block">
+
+            {/* Center: Workbench image — 21:9 framed */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.3 }}
+              animate-float
+              className="absolute top-[12%] left-[5%] right-[5%] z-20 rounded-3xl overflow-hidden ring-1 ring-[oklch(0.28_0.008_260/0.6)] shadow-[0_30px_80px_-20px_oklch(0_0_0/0.8)] group"
             >
-              <div className="flex justify-between items-start mb-6 pb-4 border-b border-[var(--border-primary)]">
+              <div className="relative" style={{ aspectRatio: '21/9' }}>
+                <img src={WORKBENCH} alt="Repair Lab" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.14_0.005_260/0.6)] via-transparent to-transparent" />
+                {/* Live pill overlay */}
+                <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[oklch(0.14_0.005_260/0.8)] backdrop-blur-md border border-[oklch(0.28_0.008_260/0.5)]">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[oklch(0.72_0.17_155)] opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-[oklch(0.72_0.17_155)]" />
+                  </span>
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[oklch(0.96_0.005_260)]">Lab session · Live</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Top-left overlap: Rating card */}
+            <motion.div
+              initial={{ opacity: 0, x: -20, y: -10 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.6 }}
+              animate={{ y: ['-8px', '8px'] }}
+              transition={{ duration: 4.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+              className="absolute top-3 left-0 z-30 w-52 backdrop-blur-xl bg-[oklch(0.18_0.006_260/0.85)] border border-[oklch(0.28_0.008_260/0.6)] rounded-2xl p-4 shadow-2xl"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-[oklch(0.65_0.19_35)] flex items-center justify-center shadow-[0_0_20px_oklch(0.65_0.19_35/0.5)] shrink-0">
+                  <span className="font-display font-black text-lg text-[oklch(0.98_0_0)]">4.9</span>
+                </div>
                 <div>
-                  <div className="text-[var(--color-ember-light)] font-bold text-xs uppercase tracking-widest mb-1">Live Status</div>
-                  <div className="text-[var(--text-primary)] font-extrabold text-xl tracking-tight">Display Replacement</div>
-                  <div className="text-[var(--text-secondary)] text-sm mt-1">iPhone 15 Pro Max</div>
-                </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-ember-light)] to-[var(--color-ember-dark)] rounded-2xl flex items-center justify-center shadow-lg shadow-[var(--color-ember-dark)]/30">
-                  <Smartphone className="w-6 h-6 text-white" />
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                   </div>
-                   <div className="flex-1">
-                     <div className="flex justify-between text-xs font-bold mb-1">
-                       <span className="text-white">Diagnostics Complete</span>
-                       <span className="text-slate-500">100%</span>
-                     </div>
-                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                       <div className="h-full bg-emerald-400 w-full" />
-                     </div>
-                   </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-brandBlue/20 border border-brandBlue/30 flex items-center justify-center relative overflow-hidden">
-                     <div className="absolute inset-0 bg-brandBlue/20 animate-ping"></div>
-                     <Wrench className="w-4 h-4 text-brandBlue" />
-                   </div>
-                   <div className="flex-1">
-                     <div className="flex justify-between text-xs font-bold mb-1">
-                       <span className="text-brandBlue">Installing Parts...</span>
-                       <span className="text-slate-500">75%</span>
-                     </div>
-                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden relative">
-                       <motion.div 
-                          initial={{ width: "0%" }}
-                          animate={{ width: "75%" }}
-                          transition={{ duration: 2, ease: "easeOut", delay: 1 }}
-                          className="absolute h-full bg-gradient-to-r from-brandBlue to-cyan-400 shadow-[0_0_10px_rgba(56,189,248,0.8)] rounded-full"
-                       />
-                     </div>
-                   </div>
+                  <p className="font-display font-bold text-sm text-[oklch(0.96_0.005_260)] leading-tight">AVG RATING</p>
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-[oklch(0.65_0.01_260)]">12k+ repairs</p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Floating Technician Profile Mock */}
-            <motion.div 
-              animate={{ y: ["10px", "-10px"] }}
-              transition={{ duration: 5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 1 }}
-              className="absolute top-[55%] right-[5%] w-64 glass !bg-[var(--color-noir-surface)]/80 rounded-[2rem] p-4 z-20 flex items-center gap-4"
+            {/* Bottom-right overlap: AI card — amber filled, rotated */}
+            <motion.div
+              initial={{ opacity: 0, x: 20, y: 20 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.7 }}
+              animate={{ y: ['10px', '-10px'] }}
+              transition={{ duration: 5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 1 }}
+              className="absolute bottom-4 right-0 z-30 w-52 bg-[oklch(0.78_0.16_75)] rounded-2xl p-4 shadow-[0_10px_40px_oklch(0.78_0.16_75/0.4)] hover:rotate-0 transition-all duration-500"
+              style={{ transform: 'rotate(3deg)' }}
             >
-              <div className="relative">
-                <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=100&h=100&fit=crop" className="w-14 h-14 rounded-full border-2 border-slate-700 object-cover" alt="Technician" />
-                <div className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-slate-800 rounded-full"></div>
-              </div>
-              <div>
-                <div className="text-white font-bold text-sm">Mike Johnson</div>
-                <div className="text-slate-400 text-xs font-medium">Master Technician</div>
-                <div className="flex items-center text-amber-400 text-xs mt-1 font-bold">
-                  <Star className="w-3 h-3 fill-current mr-1" /> 4.9 (240 jobs)
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[oklch(0.15_0.02_60/0.7)] mb-1">New</p>
+              <p className="font-display font-extrabold text-base text-[oklch(0.15_0.02_60)] leading-tight">AI-Diagnostic</p>
+              <p className="font-display font-extrabold text-base text-[oklch(0.15_0.02_60)]">2.0</p>
+              <div className="mt-3 flex items-center gap-1.5">
+                <div className="flex-1 h-1 bg-[oklch(0.15_0.02_60/0.2)] rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '85%' }}
+                    transition={{ duration: 1.5, delay: 1.2 }}
+                    className="h-full bg-[oklch(0.15_0.02_60/0.6)] rounded-full"
+                  />
                 </div>
+                <span className="font-mono text-[9px] font-bold text-[oklch(0.15_0.02_60/0.7)]">85%</span>
               </div>
             </motion.div>
-            
-            {/* Background Aesthetic Rings */}
-            <motion.div 
-              animate={{ rotate: 360 }}
-              transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-              className="absolute top-[10%] right-[10%] w-[400px] h-[400px] border border-white/5 border-dashed rounded-full -z-10"
-            />
-            <motion.div 
-              animate={{ rotate: -360 }}
-              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              className="absolute top-[15%] right-[15%] w-[320px] h-[320px] border border-brandBlue/10 rounded-full -z-10"
-            />
           </div>
         </div>
       </div>
-      
-      {/* Wave bottom separator */}
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+      {/* Section divider */}
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[oklch(0.28_0.008_260/0.5)] to-transparent" />
     </section>
   );
 };

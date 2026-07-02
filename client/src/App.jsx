@@ -38,13 +38,24 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full bg-[#020617] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-12 h-12 text-brandPurple animate-spin" />
-        <h2 className="text-xl font-bold text-white tracking-widest uppercase">Initializing Re-Gadgets</h2>
-        <div className="flex space-x-1">
-          <span className="w-2 h-2 bg-brandPurple rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-          <span className="w-2 h-2 bg-brandPurple rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-          <span className="w-2 h-2 bg-brandPurple rounded-full animate-bounce"></span>
+      <div className="h-screen w-full bg-[oklch(0.14_0.005_260)] flex flex-col items-center justify-center space-y-4">
+        {/* Ember ambient bloom */}
+        <div className="absolute top-1/3 left-1/3 w-[600px] h-[600px] rounded-full bg-[oklch(0.65_0.19_35/0.08)] blur-[160px] pointer-events-none" />
+        <div className="relative z-10 flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="w-12 h-12 rounded-2xl bg-[oklch(0.65_0.19_35)] flex items-center justify-center shadow-[0_0_30px_oklch(0.65_0.19_35/0.5)]">
+              <span className="font-display font-black text-xl text-[oklch(0.98_0_0)]">R</span>
+            </div>
+            <div className="absolute inset-0 rounded-2xl bg-[oklch(0.65_0.19_35)] animate-ping opacity-30" />
+          </div>
+          <h2 className="font-display font-extrabold text-xl text-[oklch(0.96_0.005_260)] tracking-widest uppercase">
+            Re-Gadgets
+          </h2>
+          <div className="flex space-x-1.5">
+            <span className="w-2 h-2 bg-[oklch(0.65_0.19_35)] rounded-full animate-bounce [animation-delay:-0.3s]" />
+            <span className="w-2 h-2 bg-[oklch(0.65_0.19_35)] rounded-full animate-bounce [animation-delay:-0.15s]" />
+            <span className="w-2 h-2 bg-[oklch(0.65_0.19_35)] rounded-full animate-bounce" />
+          </div>
         </div>
       </div>
     );
@@ -63,7 +74,7 @@ function App() {
                        location.pathname === '/reset-password';
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 font-sans flex flex-col selection:bg-brandPurple/30 selection:text-white">
+    <div className="min-h-screen bg-[oklch(0.14_0.005_260)] text-[oklch(0.96_0.005_260)] font-sans flex flex-col grain-overlay">
       {!isDashboardRoute && !isAuthLayout && <Navbar />}
 
       <main className="flex-1 relative flex flex-col h-full w-full">
@@ -126,7 +137,7 @@ const PageWrapper = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: 15 }}
     animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -15 }}
+    exit={{ opacity: 0, y: -10 }}
     transition={{ duration: 0.3, ease: 'easeOut' }}
     className="w-full h-full"
   >

@@ -60,10 +60,10 @@ export default function TechnicianStatsBar() {
   }, []);
 
   const stats = [
-    { title: 'Jobs Today', value: jobsToday, icon: Wrench, color: 'text-cyan-400', bg: 'from-cyan-500/20 to-blue-500/20', border: 'border-cyan-500/20' },
-    { title: 'Completed This Week', value: completed, icon: CheckCircle, color: 'text-emerald-400', bg: 'from-emerald-500/20 to-teal-500/20', border: 'border-emerald-500/20' },
-    { title: 'Avg Repair Time', value: avgTime, suffix: 'min', icon: Timer, color: 'text-amber-400', bg: 'from-amber-500/20 to-orange-500/20', border: 'border-amber-500/20' },
-    { title: 'My Rating', value: rating, suffix: '★', icon: Star, color: 'text-blue-400', bg: 'from-blue-500/20 to-indigo-500/20', border: 'border-blue-500/20', isDecimal: true },
+    { title: 'Jobs Today', value: jobsToday, icon: Wrench, color: 'text-ember', bg: 'bg-ember/10', border: 'border-ember/20' },
+    { title: 'Completed This Week', value: completed, icon: CheckCircle, color: 'text-success', bg: 'bg-success/10', border: 'border-success/20' },
+    { title: 'Avg Repair Time', value: avgTime, suffix: 'min', icon: Timer, color: 'text-amber', bg: 'bg-amber/10', border: 'border-amber/20' },
+    { title: 'My Rating', value: rating, suffix: '★', icon: Star, color: 'text-amber', bg: 'bg-amber/10', border: 'border-amber/20', isDecimal: true },
   ];
 
   return (
@@ -74,7 +74,7 @@ export default function TechnicianStatsBar() {
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "100%" }}
-            className="overflow-hidden whitespace-nowrap border-r-2 border-cyan-500 pr-2"
+            className="overflow-hidden whitespace-nowrap border-r-2 border-ember pr-2"
             transition={{ duration: 1.5, ease: "linear" }}
             onAnimationComplete={(definition: any) => {
                // Remove border after typwriter
@@ -88,7 +88,7 @@ export default function TechnicianStatsBar() {
           </motion.div>
         </h1>
         <p className="text-slate-400 font-medium text-sm mt-1 animate-fade-in-up" style={{ animationDelay: '1.2s', animationFillMode: 'both' }}>
-           You have <strong className="text-cyan-400">4 active jobs</strong> today holding priority.
+           You have <strong className="text-ember">4 active jobs</strong> today holding priority.
         </p>
       </div>
 
@@ -101,9 +101,9 @@ export default function TechnicianStatsBar() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, duration: 0.5, ease: "easeOut" }}
-              className={`bg-[#0a0a1a]/40 backdrop-blur-xl border ${stat.border} rounded-2xl p-5 relative overflow-hidden group`}
+              className={`bg-elevated/40 backdrop-blur-xl border ${stat.border} rounded-2xl p-5 relative overflow-hidden group`}
             >
-              <div className={`absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br ${stat.bg} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none`} />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-br from-white/5 to-transparent" />
               
               <div className="flex items-start justify-between relative z-10">
                 <div>
@@ -113,7 +113,7 @@ export default function TechnicianStatsBar() {
                     {stat.suffix && <span className="text-sm font-bold text-slate-500">{stat.suffix}</span>}
                   </h3>
                 </div>
-                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.bg} border ${stat.border} shadow-lg shrink-0`}>
+                <div className={`p-3 rounded-xl ${stat.bg} border ${stat.border} shadow-lg shrink-0`}>
                   <Icon className={`w-5 h-5 ${stat.color}`} />
                 </div>
               </div>

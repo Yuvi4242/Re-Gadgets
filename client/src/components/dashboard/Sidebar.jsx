@@ -2,164 +2,178 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  ShoppingBag, Star, Clock, Home, // Customer
-  Store, Users, BarChart3, Settings, // Shop
-  Wrench, CheckCircle, ListTodo, // Technician
-  ShieldAlert, Database, // Admin
-  LogOut, Award, Zap
+  ShoppingBag, Star, Clock, Home,
+  Store, Users, BarChart3, Settings,
+  Wrench, CheckCircle, ListTodo,
+  ShieldAlert, Database,
+  LogOut, Zap
 } from 'lucide-react';
 import { cn } from '../../services/utils';
 import { useAuth } from '../../context/AuthContext';
+import { LiveTicket } from '../ui/DesignSystem';
+
+/* ── Sidebar — Noir & Ember design ─────────────────────────── */
+
+const liveTickets = [
+  { id: '#GF-9221', status: 'IN TRANSIT',  progress: 65, label: 'iPhone 14 Pro · Screen',   accent: 'amber'   },
+  { id: '#GF-9215', status: 'REPAIRING',   progress: 40, label: 'MacBook M2 · Water DMG',   accent: 'ember'   },
+  { id: '#GF-9208', status: 'COMPLETE',    progress: 100, label: 'Samsung TV · Power Supply', accent: 'success' },
+];
+
+const roleNav = {
+  customer: [
+    { name: 'Dashboard',     path: '/customer/dashboard',  icon: Home },
+    { name: 'Active Orders', path: '/customer/orders',     icon: ShoppingBag },
+    { name: 'History',       path: '/customer/history',    icon: Clock },
+    { name: 'Reviews',       path: '/customer/reviews',    icon: Star },
+  ],
+  owner: [
+    { name: 'Shop HQ',        path: '/shopowner/dashboard', icon: Store },
+    { name: 'Incoming Jobs',  path: '/shopowner/requests',  icon: ListTodo },
+    { name: 'Technicians',    path: '/shopowner/techs',     icon: Users },
+    { name: 'Earnings',       path: '/shopowner/earnings',  icon: BarChart3 },
+  ],
+  worker: [
+    { name: 'My Jobs',        path: '/technician/dashboard', icon: Wrench },
+    { name: 'Active Repair',  path: '/technician/active',    icon: Clock },
+    { name: 'Completed',      path: '/technician/completed', icon: CheckCircle },
+  ],
+  admin: [
+    { name: 'Master Control', path: '/admin/dashboard',   icon: ShieldAlert },
+    { name: 'User Matrix',    path: '/admin/users',       icon: Users },
+    { name: 'Platform Stats', path: '/admin/analytics',   icon: BarChart3 },
+    { name: 'System Logs',    path: '/admin/logs',        icon: Database },
+  ],
+};
+
+const roleMeta = {
+  customer: { label: 'Your Repairs',    dot: true },
+  owner:    { label: 'Operations',      dot: true },
+  worker:   { label: 'Active Jobs',     dot: true },
+  admin:    { label: 'Live Feed',       dot: false },
+};
 
 const Sidebar = ({ role }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
 
-  const roleNav = {
-    customer: [
-      { name: 'My Dashboard', path: '/customer/dashboard', icon: Home },
-      { name: 'Active Orders', path: '/customer/orders', icon: ShoppingBag },
-      { name: 'History', path: '/customer/history', icon: Clock },
-      { name: 'Reviews', path: '/customer/reviews', icon: Star },
-    ],
-    shopOwner: [
-      { name: 'Shop HQ', path: '/shop/dashboard', icon: Store },
-      { name: 'Incoming Requests', path: '/shop/requests', icon: ListTodo },
-      { name: 'Technicians', path: '/shop/technicians', icon: Users },
-      { name: 'Earnings', path: '/shop/earnings', icon: BarChart3 },
-    ],
-    technician: [
-      { name: 'My Jobs', path: '/technician/dashboard', icon: Wrench },
-      { name: 'Active Repair', path: '/technician/active', icon: Clock },
-      { name: 'Completed Logs', path: '/technician/completed', icon: CheckCircle },
-    ],
-    admin: [
-      { name: 'Master Control', path: '/admin/dashboard', icon: ShieldAlert },
-      { name: 'User Matrix', path: '/admin/users', icon: Users },
-      { name: 'Platform Stats', path: '/admin/analytics', icon: BarChart3 },
-      { name: 'System Logs', path: '/admin/logs', icon: Database },
-    ],
-  };
-
-  const currentNav = roleNav[role] || roleNav['customer'] || [];
-
-  const getThemeColor = () => {
-     if (role === 'admin') return 'rose';
-     if (role === 'technician') return 'amber';
-     return 'brandBlue';
-  };
-
-  const color = getThemeColor();
+  const nav   = roleNav[role] || roleNav.customer;
+  const meta  = roleMeta[role] || roleMeta.customer;
+  const initials = (user?.name || 'User').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="w-full h-full bg-[var(--color-noir-surface)] bg-film-grain flex flex-col relative z-20 transition-all duration-300 shadow-[15px_0_30px_-15px_rgba(245,166,35,0.05)] border-r border-[var(--glass-border)]">
-      {/* Brand Header */}
-      <div className="p-8 pb-6 flex items-center gap-4">
-        <div className={cn(
-          "w-12 h-12 rounded-[1.2rem] flex items-center justify-center shadow-xl text-white font-black text-2xl animate-pulse-glow",
-          role === 'admin' ? "bg-gradient-to-br from-rose-500 to-rose-700 shadow-rose-500/20" :
-          role === 'worker' ? "bg-gradient-to-br from-amber-500 to-amber-700 shadow-amber-500/20" :
-          "bg-gradient-to-br from-brandBlue to-brandPurple shadow-brandBlue/20"
-        )}>
-          R
+    <div className="w-full h-full flex flex-col bg-[oklch(0.14_0.005_260)] border-r border-[oklch(0.28_0.008_260/0.5)]">
+
+      {/* ── Brand Header ─────────────────────────────────────── */}
+      <div className="px-6 pt-7 pb-5 flex items-center gap-3">
+        <div className="relative w-10 h-10 shrink-0">
+          <div className="w-10 h-10 rounded-[10px] bg-[oklch(0.65_0.19_35)] flex items-center justify-center shadow-[0_0_20px_oklch(0.65_0.19_35/0.5)]">
+            <span className="font-display font-black text-sm text-[oklch(0.98_0_0)]">RG</span>
+          </div>
+          <div className="absolute inset-0 rounded-[10px] bg-[oklch(0.65_0.19_35)] opacity-20 animate-pulse" />
         </div>
-        <div className="flex flex-col">
-          <span className="text-xl font-black text-[var(--text-primary)] tracking-tight">Re-Gadgets</span>
-          <span className={cn(
-            "text-[10px] font-black uppercase tracking-widest",
-            role === 'admin' ? "text-rose-500" :
-            role === 'worker' ? "text-amber-500" :
-            "text-brandBlue"
-          )}>
-            {role?.replace('Owner', ' Owner') || 'User'} Interface
+        <div>
+          <p className="font-display font-extrabold text-sm tracking-tight text-[oklch(0.96_0.005_260)] leading-none">
+            RE-GADGETS
+          </p>
+          <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[oklch(0.65_0.01_260)] mt-0.5">
+            GadgetFix v4
+          </p>
+        </div>
+      </div>
+
+      {/* ── Live Feed Section Label ──────────────────────────── */}
+      <div className="px-6 pb-3 flex items-center gap-2">
+        {meta.dot && (
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[oklch(0.65_0.19_35)] opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[oklch(0.65_0.19_35)]" />
           </span>
-        </div>
+        )}
+        <span className="font-mono uppercase tracking-[0.18em] text-[10px] font-bold text-[oklch(0.65_0.01_260)]">
+          {meta.label}
+        </span>
       </div>
 
-      {/* Gamification User Profile */}
-      <div className="mx-6 my-4 p-4 rounded-2xl bg-[var(--color-noir-surface-high)] border border-[var(--glass-border)] shadow-lg relative overflow-hidden group">
-         <div className="relative z-10 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[var(--color-ember-dark)] to-[var(--color-ember-light)] p-[1px] relative">
-               <div className="absolute inset-0 bg-[var(--color-ember-light)]/40 blur-md rounded-xl"></div>
-               <div className="w-full h-full rounded-xl bg-[var(--color-noir-surface-elevated)] flex items-center justify-center relative z-10">
-                 <span className="text-xs font-black text-[var(--text-primary)]">AV</span>
-               </div>
-            </div>
-            <div className="flex-1 min-w-0">
-               <p className="text-sm font-black text-[var(--text-primary)] truncate">{user?.name || 'User'}</p>
-               <div className="flex items-center gap-2 mt-0.5">
-                  <div className="px-1.5 py-0.5 rounded flex items-center gap-1 bg-[var(--color-ember-light)]/10 border border-[var(--color-ember-light)]/20">
-                     <Award className="w-3 h-3 text-[var(--color-ember-light)]" />
-                     <span className="text-[9px] font-black text-[var(--color-ember-light)] uppercase tracking-tighter">Pro</span>
-                  </div>
-                  <div className="px-1.5 py-0.5 rounded flex items-center gap-1 bg-[var(--color-noir-surface-elevated)] border border-[var(--border-primary)] text-[var(--text-secondary)]">
-                     <Zap className="w-3 h-3" />
-                     <span className="text-[9px] font-black uppercase tracking-tighter">1.2k pts</span>
-                  </div>
-               </div>
-            </div>
-         </div>
+      {/* ── Live Ticket Cards ─────────────────────────────────── */}
+      <div className="px-4 space-y-2 pb-4">
+        {liveTickets.map((ticket) => (
+          <LiveTicket
+            key={ticket.id}
+            id={ticket.id}
+            status={ticket.status}
+            progress={ticket.progress}
+            label={ticket.label}
+            accent={ticket.accent}
+          />
+        ))}
       </div>
 
-      {/* Main Navigation */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-2 no-scrollbar">
-        <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-4 ml-2">Main Menu</p>
-        {currentNav?.map((item) => {
-          if (!item) return null;
+      {/* ── Nav divider ──────────────────────────────────────── */}
+      <div className="mx-6 h-px bg-[oklch(0.28_0.008_260/0.5)] mb-3" />
+
+      {/* ── Navigation ──────────────────────────────────────── */}
+      <nav className="flex-1 overflow-y-auto px-4 space-y-1 no-scrollbar pb-2">
+        <p className="px-2 mb-2 font-mono text-[9px] uppercase tracking-[0.2em] text-[oklch(0.65_0.01_260/0.7)]">Menu</p>
+        {nav.map((item) => {
           const isActive = location.pathname === item.path;
+          const Icon = item.icon;
           return (
-             <Link key={item.path} to={item.path} className="block relative group">
+            <Link key={item.path} to={item.path} className="block relative group">
+              <div className={cn(
+                'relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 border',
+                isActive
+                  ? 'bg-[oklch(0.65_0.19_35/0.12)] border-[oklch(0.65_0.19_35/0.3)] text-[oklch(0.96_0.005_260)]'
+                  : 'border-transparent text-[oklch(0.65_0.01_260)] hover:bg-[oklch(0.18_0.006_260)] hover:border-[oklch(0.28_0.008_260/0.6)] hover:text-[oklch(0.96_0.005_260)]'
+              )}>
+                {/* Active left accent bar */}
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebarActiveBar"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[55%] bg-[oklch(0.65_0.19_35)] rounded-r-full shadow-[0_0_8px_oklch(0.65_0.19_35)]"
+                  />
+                )}
                 <div className={cn(
-                  "relative px-3 py-2.5 rounded-xl flex items-center gap-3 transition-all duration-300 border",
-                  isActive 
-                    ? "bg-[var(--color-noir-surface-elevated)] border-[var(--border-primary)] shadow-sm" 
-                    : "border-transparent text-[var(--text-secondary)] hover:bg-[var(--color-noir-surface-high)]/50 hover:border-[var(--border-primary)]"
+                  'w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all',
+                  isActive ? 'bg-[oklch(0.65_0.19_35/0.15)]' : 'bg-[oklch(0.18_0.006_260)] group-hover:bg-[oklch(0.22_0.006_260)]'
                 )}>
-                   {isActive && (
-                      <motion.div 
-                        layoutId="activeAccent"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[60%] bg-[var(--color-ember-light)] rounded-r-full shadow-[0_0_10px_var(--color-ember-light)]"
-                      />
-                   )}
-                   <div className={cn(
-                     "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300",
-                     isActive ? "bg-[var(--color-ember-light)]/10" : "bg-[var(--color-noir-surface)] border border-transparent group-hover:border-[var(--border-primary)]"
-                   )}>
-                     <item.icon className={cn(
-                       "w-4 h-4 transition-colors",
-                       isActive ? "text-[var(--color-ember-light)]" : "text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"
-                     )} />
-                   </div>
-                   <span className={cn(
-                     "font-bold text-sm tracking-tight transition-colors",
-                     isActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"
-                   )}>{item.name}</span>
+                  <Icon className={cn(
+                    'w-3.5 h-3.5 transition-colors',
+                    isActive ? 'text-[oklch(0.65_0.19_35)]' : 'text-[oklch(0.65_0.01_260)] group-hover:text-[oklch(0.96_0.005_260)]'
+                  )} />
                 </div>
-             </Link>
+                <span className="text-sm font-semibold tracking-tight">{item.name}</span>
+              </div>
+            </Link>
           );
         })}
-      </div>
+      </nav>
 
-      {/* Footer Navigation */}
-      <div className="px-6 py-4 border-t border-[var(--border-primary)] bg-[var(--color-noir-surface-high)]/50 flex flex-col gap-2 relative">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[var(--border-primary)] to-transparent"></div>
-        <Link to="/settings" className="px-3 py-2.5 rounded-xl flex items-center gap-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--color-noir-surface-elevated)] border border-transparent hover:border-[var(--border-primary)] transition-all group">
-           <div className="w-8 h-8 rounded-lg bg-[var(--color-noir-surface)] border border-transparent group-hover:border-[var(--border-primary)] flex items-center justify-center transition-all">
-              <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-500" />
-           </div>
-           <span className="font-bold text-sm">Settings</span>
-        </Link>
-        
-        <div className="h-px w-full bg-[var(--border-primary)] my-1"></div>
+      {/* ── User Chip + Logout ───────────────────────────────── */}
+      <div className="border-t border-[oklch(0.28_0.008_260/0.5)] px-4 py-4 space-y-2">
+        {/* Avatar chip */}
+        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[oklch(0.18_0.006_260)] border border-[oklch(0.28_0.008_260/0.5)]">
+          <div className="w-8 h-8 rounded-full bg-[oklch(0.65_0.19_35/0.2)] border border-[oklch(0.65_0.19_35/0.4)] flex items-center justify-center shrink-0">
+            <span className="font-display font-black text-[10px] text-[oklch(0.65_0.19_35)]">{initials}</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-[oklch(0.96_0.005_260)] truncate">{user?.name || 'User'}</p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <Zap className="w-2.5 h-2.5 text-[oklch(0.78_0.16_75)]" />
+              <span className="font-mono text-[9px] text-[oklch(0.78_0.16_75)] uppercase tracking-wide">1.2k pts</span>
+            </div>
+          </div>
+        </div>
 
-        <button 
+        {/* Logout */}
+        <button
           onClick={logout}
-          className="px-3 py-2.5 rounded-xl flex items-center gap-3 text-rose-400/80 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all group"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[oklch(0.62_0.22_25/0.7)] hover:text-[oklch(0.62_0.22_25)] hover:bg-[oklch(0.62_0.22_25/0.08)] border border-transparent hover:border-[oklch(0.62_0.22_25/0.2)] transition-all group"
         >
-           <div className="w-8 h-8 rounded-lg bg-rose-500/5 group-hover:bg-rose-500/20 flex items-center justify-center transition-all">
-              <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
-           </div>
-           <span className="font-bold text-sm">Sign Out</span>
+          <div className="w-7 h-7 rounded-lg bg-[oklch(0.62_0.22_25/0.06)] flex items-center justify-center shrink-0">
+            <LogOut className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+          </div>
+          <span className="text-sm font-semibold">Sign Out</span>
         </button>
       </div>
     </div>
