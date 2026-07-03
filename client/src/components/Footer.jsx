@@ -64,17 +64,33 @@ const Footer = () => {
                 {title}
               </h5>
               <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link}>
-                    <Link
-                      to={link === 'Book a Repair' ? '/book' : link === 'Live Tracking' ? '/tracking' : '#'}
-                      className="text-sm text-[oklch(0.65_0.01_260)] hover:text-[oklch(0.96_0.005_260)] transition-colors flex items-center gap-1.5 group"
-                    >
-                      <span className="w-1 h-1 rounded-full bg-[oklch(0.65_0.19_35)] opacity-0 group-hover:opacity-100 transition-opacity" />
-                      {link}
-                    </Link>
-                  </li>
-                ))}
+                {links.map((link) => {
+                  let path = '#';
+                  if (link === 'Book a Repair') path = '/book';
+                  else if (link === 'Live Tracking') path = '/tracking';
+                  else if (link === 'AI Diagnostics') path = '/diagnostics';
+                  else if (link === 'Pricing') path = '/pricing';
+                  else if (link === 'About Us') path = '/about';
+                  else if (link === 'Careers') path = '/careers';
+                  else if (link === 'Blog') path = '/blog';
+                  else if (link === 'Contact') path = '/contact';
+                  else if (link === 'Shop Owner Login') path = '/shopowner/login';
+                  else if (link === 'Technician Portal') path = '/technician/login';
+                  else if (link === 'API Docs') path = '/api-docs';
+                  else if (link === 'Status') path = '/status';
+
+                  return (
+                    <li key={link}>
+                      <Link
+                        to={path}
+                        className="text-sm text-[oklch(0.65_0.01_260)] hover:text-[oklch(0.96_0.005_260)] transition-colors flex items-center gap-1.5 group"
+                      >
+                        <span className="w-1 h-1 rounded-full bg-[oklch(0.65_0.19_35)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                        {link}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -86,11 +102,11 @@ const Footer = () => {
             © 2026 Re-Gadgets. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
-            <Link to="#" className="text-xs text-[oklch(0.65_0.01_260/0.7)] hover:text-[oklch(0.65_0.01_260)] transition-colors">Privacy</Link>
+            <Link to="/privacy" className="text-xs text-[oklch(0.65_0.01_260/0.7)] hover:text-[oklch(0.65_0.01_260)] transition-colors">Privacy</Link>
             <div className="w-1 h-1 rounded-full bg-[oklch(0.28_0.008_260/0.7)]" />
-            <Link to="#" className="text-xs text-[oklch(0.65_0.01_260/0.7)] hover:text-[oklch(0.65_0.01_260)] transition-colors">Terms</Link>
+            <Link to="/terms" className="text-xs text-[oklch(0.65_0.01_260/0.7)] hover:text-[oklch(0.65_0.01_260)] transition-colors">Terms</Link>
             <div className="w-1 h-1 rounded-full bg-[oklch(0.28_0.008_260/0.7)]" />
-            <Link to="#" className="text-xs text-[oklch(0.65_0.01_260/0.7)] hover:text-[oklch(0.65_0.01_260)] transition-colors">Cookies</Link>
+            <Link to="/cookies" className="text-xs text-[oklch(0.65_0.01_260/0.7)] hover:text-[oklch(0.65_0.01_260)] transition-colors">Cookies</Link>
           </div>
         </div>
       </div>
