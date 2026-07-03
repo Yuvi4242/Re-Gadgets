@@ -7,6 +7,30 @@ import Home from './pages/Home';
 import BookService from './pages/BookService';
 import Tracking from './pages/Tracking';
 import ChatBot from './components/chat/ChatBot';
+import ScrollToTop from './components/ScrollToTop';
+
+// Product
+import AIDiagnostics from './pages/product/AIDiagnostics';
+import Pricing from './pages/product/Pricing';
+
+// Company
+import About from './pages/company/About';
+import Careers from './pages/company/Careers';
+import Blog from './pages/company/Blog';
+import BlogPost from './pages/company/BlogPost';
+import Contact from './pages/company/Contact';
+
+// Platform
+import ShopOwnerLogin from './pages/platform/ShopOwnerLogin';
+import TechnicianLogin from './pages/platform/TechnicianLogin';
+import ApiDocs from './pages/platform/ApiDocs';
+import Status from './pages/platform/Status';
+
+// Legal
+import LegalLayout from './pages/legal/LegalLayout';
+import Privacy from './pages/legal/Privacy';
+import Terms from './pages/legal/Terms';
+import Cookies from './pages/legal/Cookies';
 
 // Auth Pages
 import Signup from './pages/auth/Signup';
@@ -71,10 +95,13 @@ function App() {
                        location.pathname === '/signup' ||
                        location.pathname === '/verify-email' ||
                        location.pathname === '/forgot-password' ||
-                       location.pathname === '/reset-password';
+                       location.pathname === '/reset-password' ||
+                       location.pathname === '/shopowner/login' ||
+                       location.pathname === '/technician/login';
 
   return (
     <div className="min-h-screen bg-[oklch(0.14_0.005_260)] text-[oklch(0.96_0.005_260)] font-sans flex flex-col grain-overlay">
+      <ScrollToTop />
       {!isDashboardRoute && !isAuthLayout && <Navbar />}
 
       <main className="flex-1 relative flex flex-col h-full w-full">
@@ -85,10 +112,31 @@ function App() {
                <Route path="/book" element={<PageWrapper><BookService /></PageWrapper>} />
                <Route path="/tracking" element={<PageWrapper><Tracking /></PageWrapper>} />
                
+               <Route path="/diagnostics" element={<PageWrapper><AIDiagnostics /></PageWrapper>} />
+               <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
+               
+               <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+               <Route path="/careers" element={<PageWrapper><Careers /></PageWrapper>} />
+               <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
+               <Route path="/blog/:slug" element={<PageWrapper><BlogPost /></PageWrapper>} />
+               <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+               
+               <Route path="/api-docs" element={<PageWrapper><ApiDocs /></PageWrapper>} />
+               <Route path="/status" element={<PageWrapper><Status /></PageWrapper>} />
+               
+               {/* Legal Routes */}
+               <Route element={<PageWrapper><LegalLayout /></PageWrapper>}>
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/cookies" element={<Cookies />} />
+               </Route>
+               
                {/* Auth Routes */}
                <Route path="/auth" element={<Navigate to="/login" replace />} />
                <Route path="/signup" element={<PageWrapper><Signup /></PageWrapper>} />
                <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+               <Route path="/shopowner/login" element={<PageWrapper><ShopOwnerLogin /></PageWrapper>} />
+               <Route path="/technician/login" element={<PageWrapper><TechnicianLogin /></PageWrapper>} />
                <Route path="/verify-email" element={<PageWrapper><VerifyEmail /></PageWrapper>} />
                <Route path="/forgot-password" element={<PageWrapper><ForgotPassword /></PageWrapper>} />
                <Route path="/reset-password" element={<PageWrapper><ResetPassword /></PageWrapper>} />
