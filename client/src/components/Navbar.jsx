@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Settings, LayoutDashboard, LogOut, UserCircle } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
+import AnimatedLogo from './ui/AnimatedLogo';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
@@ -51,14 +52,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-12">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group relative">
-            <div className="absolute inset-0 bg-brandBlue/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"></div>
-            <div className={`relative w-10 h-10 rounded-xl bg-gradient-to-br from-brandBlue to-brandPurple flex items-center justify-center text-white font-bold transition-all duration-300 border ${scrolled ? 'shadow-[0_0_20px_rgba(79,70,229,0.5)] border-transparent' : 'border-white/20 group-hover:border-transparent group-hover:shadow-[0_0_20px_rgba(79,70,229,0.5)]'}`}>
-              <Settings className="w-5 h-5 animate-spin-slow" style={{ animationDuration: '10s' }} />
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-cyan-300 transition-all duration-500">
-              Re-Gadgets
-            </span>
+          <Link to="/" className="flex items-center group relative">
+            <AnimatedLogo size="md" loop={true} />
           </Link>
 
           {/* Desktop Menu */}
