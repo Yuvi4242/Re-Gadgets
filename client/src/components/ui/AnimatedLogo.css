@@ -1,0 +1,144 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   AnimatedLogo.css  —  Re-Gadgets orange-amber theme
+   Matches home page:  oklch(0.14 0.005 260) bg  •  orange accent  •  Sora/Manrope
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Root lockup ──────────────────────────────────────────────────────────── */
+.al-root {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ── Icon wrapper ─────────────────────────────────────────────────────────── */
+.al-icon-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Ambient orange glow blob ─────────────────────────────────────────────── */
+.al-ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(251, 191, 36, 0.55)  0%,
+    rgba(249, 115, 22, 0.30) 42%,
+    transparent 70%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Spark particle ───────────────────────────────────────────────────────── */
+.al-spark-particle {
+  background: linear-gradient(
+    to bottom,
+    #FDE68A 0%,
+    #F97316 55%,
+    rgba(234, 76, 26, 0) 100%
+  );
+  transform: rotate(var(--rot));
+  animation: al-spark-fly 0.65s ease-out var(--delay) both;
+  box-shadow: 0 0 4px 1px rgba(249, 115, 22, 0.7);
+}
+
+@keyframes al-spark-fly {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--rot)) translate(0, 0) scaleY(1);
+  }
+  60% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--rot)) translate(var(--tx), var(--ty)) scaleY(0.25);
+  }
+}
+
+/* ── Emblem box ───────────────────────────────────────────────────────────── */
+.al-emblem-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  filter:
+    drop-shadow(0 0 12px rgba(249, 115, 22, 0.55))
+    drop-shadow(0 2px 8px rgba(0, 0, 0, 0.75));
+}
+
+/* ── Bolt flash layer (warm glow over emblem during flicker) ──────────────── */
+.al-bolt-flash {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 48% 30%,
+    rgba(253, 230, 138, 0.35) 0%,
+    rgba(249, 115, 22, 0.15) 50%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 4;
+  mix-blend-mode: screen;
+}
+
+/* ── Wordmark wrapper ─────────────────────────────────────────────────────── */
+.al-wordmark-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+}
+
+/* ── Amber shine streak ───────────────────────────────────────────────────── */
+.al-text-shine {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 40%;
+  height: calc(100% + 8px);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(253, 230, 138, 0.60) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+  transform: skewX(-10deg);
+}
+
+/* ── Wordmark ─────────────────────────────────────────────────────────────── */
+.al-wordmark {
+  font-family: 'Sora', 'Manrope', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+  position: relative;
+  z-index: 1;
+  color: #F5F5F7;   /* near-white — matches oklch(0.96 0.005 260) */
+  text-shadow:
+    0 0 22px rgba(249, 115, 22, 0.20),
+    0 1px 4px rgba(0, 0, 0, 0.60);
+}
+
+/* ── Screen-reader-only ───────────────────────────────────────────────────── */
+.al-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
