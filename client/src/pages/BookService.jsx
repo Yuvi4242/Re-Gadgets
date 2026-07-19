@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smartphone, Laptop, Tv, Wind, MapPin, Calendar, ArrowRight, CheckCircle2, Navigation } from 'lucide-react';
+import { Smartphone, Laptop, Tv, Wind, MapPin, Calendar, ArrowRight, CheckCircle2, Navigation, AlertCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { createOrder } from '../services/orderService';
 
 const devices = [
   { id: 'mobile', name: 'Mobile Phone', icon: Smartphone, color: 'text-blue-400', bg: 'from-blue-500 to-cyan-400' },
@@ -23,11 +24,71 @@ const variants = {
 const BookService = () => {
   const [[step, direction], setStep] = useState([1, 0]);
   const [selectedDevice, setSelectedDevice] = useState(null);
+  
+  // Form State
+  const [deviceModel, setDeviceModel] = useState('');
+  const [issue, setIssue] = useState('');
+  const [pickupAddress, setPickupAddress] = useState('');
+  const [selectedDay, setSelectedDay] = useState('today'); // 'today' or 'tomorrow'
+  const [selectedTime, setSelectedTime] = useState('02:00 PM');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const navigate = useNavigate();
 
-  const paginate = (newStep) => setStep([newStep, newStep > step ? 1 : -1]);
+  const paginate = (newStep) => {
+    setError('');
+    setStep([newStep, newStep > step ? 1 : -1]);
+  };
 
   const currentDevice = devices.find(d => d.id === selectedDevice);
+
+  const getScheduledDate = () => {
+    const date = new Date();
+    if (selectedDay === 'tomorrow') {
+      date.setDate(date.getDate() + 1);
+    }
+    // Parse selectedTime (e.g. '02:00 PM')
+    const [time, modifier] = selectedTime.split(' ');
+    let [hours, minutes] = time.split(':');
+    if (hours === '12') {
+      hours = '00';
+    }
+    if (modifier === 'PM') {
+      hours = parseInt(hours, 10) + 12;
+    }
+    date.setHours(hours, parseInt(minutes, 10), 0, 0);
+    return date;
+  };
+
+  const handleConfirmBooking = async () => {
+    if (!selectedDevice || !deviceModel.trim() || !issue.trim() || !pickupAddress.trim()) {
+      setError('Please fill out all required fields.');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    try {
+      const scheduledDate = getScheduledDate();
+      const orderData = {
+        deviceType: currentDevice.name,
+        deviceModel: deviceModel.trim(),
+        issue: issue.trim(),
+        pickupAddress: pickupAddress.trim(),
+        scheduledDate
+      };
+      const result = await createOrder(orderData);
+      setLoading(false);
+      if (result && result.order) {
+        navigate(`/tracking?id=${result.order._id}`);
+      } else {
+        setError('Booking failed: No order details returned.');
+      }
+    } catch (err) {
+      setLoading(false);
+      setError(err.response?.data?.error || err.message || 'Failed to submit booking request.');
+    }
+  };
 
   return (
     <div className="pt-24 pb-20 max-w-4xl mx-auto px-4 sm:px-6 relative isolate min-h-screen">
@@ -170,6 +231,8 @@ const BookService = () => {
                    <label className="block text-sm font-bold text-slate-300 mb-2">Device Model or Reference</label>
                    <input 
                      type="text" 
+                     value={deviceModel}
+                     onChange={(e) => setDeviceModel(e.target.value)}
                      placeholder="e.g. iPhone 13 Pro Max (256GB)" 
                      className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-[#060e20]/50 backdrop-blur-md focus:bg-[#060e20] focus:outline-none focus:ring-2 focus:ring-brandBlue/50 transition-all text-white font-medium placeholder-slate-600 shadow-inner"
                    />
@@ -179,6 +242,8 @@ const BookService = () => {
                    <motion.textarea 
                      whileFocus={{ scale: 1.01 }}
                      rows={4}
+                     value={issue}
+                     onChange={(e) => setIssue(e.target.value)}
                      placeholder="The screen is shattered and touch is unresponsive at the top..." 
                      className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-[#060e20]/50 backdrop-blur-md focus:bg-[#060e20] focus:outline-none focus:ring-2 focus:ring-brandBlue/50 transition-all text-white font-medium placeholder-slate-600 shadow-inner resize-none"
                    />
@@ -249,44 +314,60 @@ const BookService = () => {
                      </div>
                    </motion.div>
 
-                   <textarea 
-                     rows={2}
-                     placeholder="Enter complete address, building name, flat no..." 
-                     className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-[#060e20]/50 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-brandBlue/50 text-white font-medium text-sm shadow-inner transition-all resize-none placeholder-slate-600"
-                   />
-                 </div>
+                    <textarea 
+                      rows={2}
+                      value={pickupAddress}
+                      onChange={(e) => setPickupAddress(e.target.value)}
+                      placeholder="Enter complete address, building name, flat no..." 
+                      className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-[#060e20]/50 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-brandBlue/50 text-white font-medium text-sm shadow-inner transition-all resize-none placeholder-slate-600"
+                    />
+                  </div>
 
-                 {/* Time Box */}
-                 <div className="space-y-4">
-                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                     <Calendar className="w-4 h-4 text-brandPurple" /> Select Slot
-                   </h3>
-                   
-                   <div className="grid grid-cols-2 gap-3">
-                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-4 py-3.5 rounded-2xl border-2 border-brandBlue bg-brandBlue/10 text-center cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.2)]">
-                       <span className="font-extrabold text-white text-sm">Today</span>
-                       <p className="text-xs text-brandBlue font-medium mt-1">Available</p>
-                     </motion.div>
-                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-4 py-3.5 rounded-2xl border border-white/10 bg-white/5 hover:border-white/20 text-center cursor-pointer shadow-sm">
-                       <span className="font-bold text-slate-300 text-sm">Tomorrow</span>
-                       <p className="text-xs text-slate-500 font-medium mt-1">Slots Open</p>
-                     </motion.div>
-                   </div>
+                  {/* Time Box */}
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-brandPurple" /> Select Slot
+                    </h3>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div 
+                        whileHover={{ scale: 1.05 }} 
+                        whileTap={{ scale: 0.95 }} 
+                        onClick={() => setSelectedDay('today')}
+                        className={`px-4 py-3.5 rounded-2xl border text-center cursor-pointer shadow-sm transition-all ${selectedDay === 'today' ? 'border-brandBlue bg-brandBlue/10 shadow-[0_0_15px_rgba(79,70,229,0.2)]' : 'border-white/10 bg-white/5 hover:border-white/20'}`}
+                      >
+                        <span className={`font-extrabold text-sm ${selectedDay === 'today' ? 'text-white' : 'text-slate-300'}`}>Today</span>
+                        <p className={`text-xs font-medium mt-1 ${selectedDay === 'today' ? 'text-brandBlue' : 'text-slate-500'}`}>Available</p>
+                      </motion.div>
+                      <motion.div 
+                        whileHover={{ scale: 1.05 }} 
+                        whileTap={{ scale: 0.95 }} 
+                        onClick={() => setSelectedDay('tomorrow')}
+                        className={`px-4 py-3.5 rounded-2xl border text-center cursor-pointer shadow-sm transition-all ${selectedDay === 'tomorrow' ? 'border-brandBlue bg-brandBlue/10 shadow-[0_0_15px_rgba(79,70,229,0.2)]' : 'border-white/10 bg-white/5 hover:border-white/20'}`}
+                      >
+                        <span className={`font-bold text-sm ${selectedDay === 'tomorrow' ? 'text-white' : 'text-slate-300'}`}>Tomorrow</span>
+                        <p className={`text-xs font-medium mt-1 ${selectedDay === 'tomorrow' ? 'text-brandBlue' : 'text-slate-500'}`}>Slots Open</p>
+                      </motion.div>
+                    </div>
 
-                   <div className="grid grid-cols-2 gap-3 mt-4">
-                     {['10:00 AM', '02:00 PM', '04:00 PM', '06:00 PM'].map((time, i) => (
-                       <motion.div 
-                         key={i} 
-                         whileHover={{ scale: 1.05 }} 
-                         whileTap={{ scale: 0.95 }} 
-                         className={`p-3 rounded-2xl border-2 text-center cursor-pointer text-sm font-bold transition-all shadow-sm ${i === 1 ? 'border-brandBlue bg-brandBlue text-white shadow-[0_0_15px_rgba(79,70,229,0.5)]' : 'border-white/10 bg-white/5 hover:border-brandPurple/50 text-slate-300'}`}
-                       >
-                         {time}
-                       </motion.div>
-                     ))}
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                      {['10:00 AM', '02:00 PM', '04:00 PM', '06:00 PM'].map((time, i) => {
+                        const isTimeSelected = selectedTime === time;
+                        return (
+                          <motion.div 
+                            key={i} 
+                            whileHover={{ scale: 1.05 }} 
+                            whileTap={{ scale: 0.95 }} 
+                            onClick={() => setSelectedTime(time)}
+                            className={`p-3 rounded-2xl border-2 text-center cursor-pointer text-sm font-bold transition-all shadow-sm ${isTimeSelected ? 'border-brandBlue bg-brandBlue text-white shadow-[0_0_15px_rgba(79,70,229,0.5)]' : 'border-white/10 bg-white/5 hover:border-brandPurple/50 text-slate-300'}`}
+                          >
+                            {time}
+                          </motion.div>
+                        );
+                      })}
+                    </div>
                    </div>
                  </div>
-               </div>
 
                {/* Estimate banner */}
                <div className="p-5 sm:p-6 rounded-[2rem] bg-gradient-to-r from-[#121c33] to-[#060e20] text-white flex flex-col sm:flex-row items-center justify-between mb-8 shadow-2xl border border-white/10 relative overflow-hidden isolate">
@@ -306,23 +387,39 @@ const BookService = () => {
                   </div>
                </div>
 
-               <div className="flex gap-4 mt-auto pt-4 border-t border-white/10">
-                 <button 
-                   onClick={() => paginate(2)}
-                   className="px-8 py-4 rounded-full font-bold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 shadow-sm transition-all"
-                 >
-                   Back
-                 </button>
-                 <motion.button 
-                   whileHover={{ scale: 1.02 }}
-                   whileTap={{ scale: 0.95 }}
-                   onClick={() => navigate("/tracking")}
-                   className="flex-1 py-4 rounded-full font-extrabold text-white bg-gradient-to-r from-brandBlue to-brandPurple hover:shadow-[0_0_40px_-5px_var(--color-brandPurple)] transition-all text-lg shadow-xl relative overflow-hidden group"
-                 >
-                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                   <span className="relative z-10">Confirm Booking</span>
-                 </motion.button>
-               </div>
+                {error && (
+                  <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 font-medium text-sm flex items-center gap-2 relative z-10">
+                    <AlertCircle className="w-5 h-5 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <div className="flex gap-4 mt-auto pt-4 border-t border-white/10 relative z-10">
+                  <button 
+                    onClick={() => paginate(2)}
+                    disabled={loading}
+                    className="px-8 py-4 rounded-full font-bold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Back
+                  </button>
+                  <motion.button 
+                    whileHover={loading ? {} : { scale: 1.02 }}
+                    whileTap={loading ? {} : { scale: 0.95 }}
+                    onClick={handleConfirmBooking}
+                    disabled={loading}
+                    className="flex-1 py-4 rounded-full font-extrabold text-white bg-gradient-to-r from-brandBlue to-brandPurple hover:shadow-[0_0_40px_-5px_var(--color-brandPurple)] transition-all text-lg shadow-xl relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-55 disabled:cursor-not-allowed"
+                  >
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Creating Booking...</span>
+                      </>
+                    ) : (
+                      <span className="relative z-10">Confirm Booking</span>
+                    )}
+                  </motion.button>
+                </div>
             </motion.div>
           )}
 

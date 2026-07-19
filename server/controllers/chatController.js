@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export const generateChatResponse = async (req, res) => {
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY; // Required for live AI; falls back to mock replies when unset
     const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
     
     const { message, history } = req.body;

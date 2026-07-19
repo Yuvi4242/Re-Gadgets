@@ -19,4 +19,23 @@ export const certStorage = new CloudinaryStorage({
   params: { folder: 'gadgetfix/certifications', resource_type: 'auto' },
 });
 
+export const verificationDocStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'gadgetfix/verification-docs',
+    resource_type: 'auto',
+    allowed_formats: ['pdf', 'jpg', 'jpeg', 'png', 'webp'],
+  },
+});
+
+export const profileImageStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'gadgetfix/profile-images',
+    resource_type: 'image',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 400, height: 400, crop: 'fill', gravity: 'face' }],
+  },
+});
+
 export { cloudinary };

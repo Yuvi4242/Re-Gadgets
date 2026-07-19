@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Clipboard, DollarSign, UserCheck, AlertCircle } from 'lucide-react';
-
-const statsData = [
-  { id: 1, label: 'Total Orders Today', value: 42, icon: Clipboard, color: 'from-amber to-amber-light' },
-  { id: 2, label: 'Revenue This Month', value: 12450, icon: DollarSign, color: 'from-success to-success-light', prefix: '$' },
-  { id: 3, label: 'Active Technicians', value: 8, icon: UserCheck, color: 'from-ember to-ember-light' },
-  { id: 4, label: 'Pending Approvals', value: 3, icon: AlertCircle, color: 'from-danger to-danger-light', pulse: true },
-];
+import { getOwnerStats } from '../../services/shopService';
 
 const useCounter = (end: number, duration: number = 2) => {
   const [count, setCount] = useState(0);
@@ -30,7 +24,7 @@ const useCounter = (end: number, duration: number = 2) => {
   return count;
 };
 
-const StatCard = ({ stat, index }: { stat: typeof statsData[0], index: number }) => {
+const StatCard = ({ stat, index }: { stat: any, index: number }) => {
   const count = useCounter(stat.value);
   const Icon = stat.icon;
 
@@ -68,6 +62,26 @@ const StatCard = ({ stat, index }: { stat: typeof statsData[0], index: number })
 };
 
 export default function ShopOwnerStatsBar() {
+  const [statsData, setStatsData] = useState([
+    { id: 1, label: 'Total Orders Today', value: 0, icon: Clipboard, color: 'from-amber to-amber-light' },
+    { id: 2, label: 'Revenue This Month', value: 0, icon: DollarSign, color: 'from-success to-success-light', prefix: '$' },
+    { id: 3, label: 'Active Technicians', value: 0, icon: UserCheck, color: 'from-ember to-ember-light' },
+    { id: 4, label: 'Pending Approvals', value: 0, icon: AlertCircle, color: 'from-danger to-danger-light', pulse: true },
+  ]);
+
+  useEffect(() => {
+    getOwnerStats()
+      .then((stats) => {
+        setStatsData([
+          { id: 1, label: 'Total Orders Today', value: stats.ordersToday || 0, icon: Clipboard, color: 'from-amber to-amber-light' },
+          { id: 2, label: 'Revenue This Month', value: Math.round(stats.revenueThisMonth || 0), icon: DollarSign, color: 'from-success to-success-light', prefix: '$' },
+          { id: 3, label: 'Active Technicians', value: stats.activeTechnicians || 0, icon: UserCheck, color: 'from-ember to-ember-light' },
+          { id: 4, label: 'Pending Approvals', value: stats.pendingApprovals || 0, icon: AlertCircle, color: 'from-danger to-danger-light', pulse: true },
+        ]);
+      })
+      .catch((err) => console.error('Failed to load owner stats', err));
+  }, []);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10 mb-8">
       {statsData.map((stat, i) => (

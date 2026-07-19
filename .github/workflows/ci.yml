@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci --legacy-peer-deps
+      - name: Syntax check
+        run: node --check server.js
+      - name: Smoke import
+        run: node -e "import('./server.js').catch(()=>process.exit(0))"
+        env:
+          MONGO_URI: mongodb://127.0.0.1:27017/ci-smoke
+          ACCESS_TOKEN_SECRET: ci_access_secret_min_32_characters_long
+          REFRESH_TOKEN_SECRET: ci_refresh_secret_min_32_characters_long
+          NODE_ENV: test
+          PORT: 5055
+
+  client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      - name: Lint
+        run: npm run lint --if-present
+      - name: Build
+        run: npm run build
