@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       enum: ['customer', 'technician', 'shopOwner', 'admin'],
       required: [true, 'Please specify a role'],
     },
+    profileImage: {
+      type: String,
+      default: null,
+    },
     isVerified: {
       type: Boolean,
       default: false,
@@ -33,6 +37,15 @@ const userSchema = new mongoose.Schema(
     isProfileComplete: {
       type: Boolean,
       default: false,
+    },
+    // Account lockout after failed logins
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockUntil: {
+      type: Date,
+      default: null,
     },
     otp: String,
     otpExpiry: Date,
@@ -49,16 +62,41 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Hash password before saving
+userSchema.virtual('isLocked').get(function () {
+  return !!(this.lockUntil && this.lockUntil > Date.now());
+});
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-// Method to check password
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.incLoginAttempts = async function () {
+  const MAX_ATTEMPTS = 5;
+  const LOCK_TIME_MS = 30 * 60 * 1000; // 30 minutes
+
+  if (this.lockUntil && this.lockUntil < Date.now()) {
+    this.failedLoginAttempts = 1;
+    this.lockUntil = undefined;
+    return this.save({ validateBeforeSave: false });
+  }
+
+  this.failedLoginAttempts += 1;
+  if (this.failedLoginAttempts >= MAX_ATTEMPTS) {
+    this.lockUntil = new Date(Date.now() + LOCK_TIME_MS);
+  }
+  return this.save({ validateBeforeSave: false });
+};
+
+userSchema.methods.resetLoginAttempts = async function () {
+  this.failedLoginAttempts = 0;
+  this.lockUntil = undefined;
+  return this.save({ validateBeforeSave: false });
 };
 
 const User = mongoose.model('User', userSchema);

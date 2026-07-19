@@ -105,13 +105,29 @@ export const login = asyncHandler(async (req, res, next) => {
 
   const user = await User.findOne({ email: email.toLowerCase().trim() }).select('+password');
 
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  if (!user) {
+    return res.status(401).json({ success: false, message: 'Invalid email or password' });
+  }
+
+  // Account lockout check
+  if (user.lockUntil && user.lockUntil > Date.now()) {
+    const minutesLeft = Math.ceil((user.lockUntil - Date.now()) / 60000);
+    return res.status(423).json({
+      success: false,
+      message: `Account temporarily locked due to too many failed attempts. Try again in ${minutesLeft} minute(s).`,
+    });
+  }
+
+  if (!(await user.correctPassword(password, user.password))) {
+    await user.incLoginAttempts();
     return res.status(401).json({ success: false, message: 'Invalid email or password' });
   }
 
   if (!user.isVerified) {
     return res.status(403).json({ success: false, message: 'Please verify your email before logging in' });
   }
+
+  await user.resetLoginAttempts();
 
   const accessToken = signAccessToken(user._id, user.role);
   const refreshToken = signRefreshToken(user._id);
@@ -127,7 +143,7 @@ export const login = asyncHandler(async (req, res, next) => {
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 
-    res.status(200).json({
+  res.status(200).json({
     success: true,
     accessToken,
     user: {
@@ -136,6 +152,7 @@ export const login = asyncHandler(async (req, res, next) => {
       email: user.email,
       role: user.role,
       isProfileComplete: user.isProfileComplete,
+      profileImage: user.profileImage,
     },
   });
 });
@@ -307,26 +324,80 @@ export const getMe = asyncHandler(async (req, res, next) => {
       email: req.user.email,
       role: req.user.role,
       isProfileComplete: req.user.isProfileComplete,
+      profileImage: req.user.profileImage,
     },
   });
 });
 
 export const completeProfile = asyncHandler(async (req, res, next) => {
-  const { skip, phone, address, city, pincode, skills, experienceYears, serviceCity, idProof, bio, shopName, gstNumber, shopCategory, openingHours } = req.body;
+  let {
+    skip,
+    phone,
+    address,
+    city,
+    pincode,
+    skills,
+    experienceYears,
+    serviceCity,
+    idProof,
+    bio,
+    shopName,
+    gstNumber,
+    shopCategory,
+    openingHours,
+  } = req.body;
   const user = req.user;
 
-  if (!skip) {
+  // Real file upload via Cloudinary multer (field: ownerIdProof)
+  if (req.file) {
+    idProof = req.file.path || req.file.secure_url;
+  }
+
+  // Parse skills if sent as JSON string (multipart forms)
+  if (typeof skills === 'string') {
+    try {
+      skills = JSON.parse(skills);
+    } catch {
+      skills = skills.split(',').map((s) => s.trim()).filter(Boolean);
+    }
+  }
+
+  const isSkip = skip === true || skip === 'true';
+
+  if (!isSkip) {
     if (user.role === 'customer') {
       await CustomerProfile.create({ userId: user._id, phone, address, city, pincode });
     } else if (user.role === 'technician') {
-      await TechnicianProfile.create({ userId: user._id, phone, skills, experienceYears, serviceCity, pincode, idProof, bio });
+      await TechnicianProfile.create({
+        userId: user._id,
+        phone,
+        skills,
+        experienceYears,
+        serviceCity,
+        pincode,
+        idProof,
+        bio,
+      });
     } else if (user.role === 'shopOwner') {
-      await ShopOwnerProfile.create({ userId: user._id, shopName, phone, address, city, pincode, gstNumber, shopCategory, openingHours });
+      await ShopOwnerProfile.create({
+        userId: user._id,
+        shopName,
+        phone,
+        address,
+        city,
+        pincode,
+        gstNumber,
+        shopCategory,
+        openingHours,
+      });
     }
   }
 
   user.isProfileComplete = true;
   await user.save({ validateBeforeSave: false });
 
-  res.status(200).json({ success: true, message: skip ? 'Profile setup skipped' : 'Profile completed successfully' });
+  res.status(200).json({
+    success: true,
+    message: isSkip ? 'Profile setup skipped' : 'Profile completed successfully',
+  });
 });
