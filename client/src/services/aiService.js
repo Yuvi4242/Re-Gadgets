@@ -8,7 +8,7 @@ export const sendChatMessage = async (message, history) => {
        text: m.text
     }));
 
-    const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const rawUrl = import.meta.env.VITE_API_URL || 'https://re-gadgets-backend.vercel.app/api';
     const apiBase = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl.replace(/\/$/, '')}/api`;
     const response = await fetch(`${apiBase}/chat`, {
        method: 'POST',

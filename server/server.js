@@ -1,89 +1,34 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
-import helmet from 'helmet';
-import morgan from 'morgan';
 import http from 'http';
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 
+import app from './app.js';
 import { connectDB } from './config/db.js';
-import { errorHandler } from './middleware/errorHandler.js';
-
-import authRoutes from './routes/authRoutes.js';
-import orderRoutes from './routes/orderRoutes.js';
-import shopRoutes from './routes/shopRoutes.js';
-import chatRoutes from './routes/chat.js';
-import workerRoutes from './routes/workerRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import repairBookingRoutes from './routes/repairBookingRoutes.js';
-import paymentRoutes from './routes/paymentRoutes.js';
-
 import User from './models/userModel.js';
 import Order from './models/Order.js';
 import Shop from './models/Shop.js';
 
-dotenv.config();
+const PORT = process.env.PORT || 5000;
 
-const app = express();
+// HTTP Server instance for local development / persistent server environment
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: [
+      'https://re-gadgets.vercel.app',
+      process.env.CLIENT_URL,
+      'http://localhost:5173',
+      'http://localhost:3000',
+    ].filter(Boolean),
     methods: ['GET', 'POST', 'PATCH'],
     credentials: true,
   },
 });
 
 app.set('io', io);
-const PORT = process.env.PORT || 5000;
 
-// Security headers (X-Frame-Options, X-Content-Type-Options, etc.)
-app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    credentials: true,
-  })
-);
-
-// Request logging
-if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-}
-
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
-// Main App Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/shops', shopRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/repair-bookings', repairBookingRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api', workerRoutes);
-
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    message: 'Re-Gadgets Premium API is running smoothly.',
-  });
-});
-
-app.get('/', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
-
-app.use(errorHandler);
-
-// Socket.IO authentication middleware
+// Socket.IO authentication middleware (Local Dev)
 io.use(async (socket, next) => {
   try {
     let token = socket.handshake.auth?.token || socket.handshake.query?.token;
@@ -132,7 +77,6 @@ io.on('connection', (socket) => {
       } else if (order.customer && order.customer.toString() === userId) {
         isAuthorized = true;
       } else if (order.workerId) {
-        // Worker model may be linked via userId
         const Worker = (await import('./models/Worker.js')).default;
         const worker = await Worker.findById(order.workerId);
         if (worker && (worker.userId?.toString() === userId || worker._id.toString() === userId)) {
@@ -196,7 +140,11 @@ const gracefulShutdown = async (signal) => {
   }
 };
 
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+// Only run server.listen in non-Vercel environment
+if (!process.env.VERCEL) {
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  startServer();
+}
 
-startServer();
+export default app;

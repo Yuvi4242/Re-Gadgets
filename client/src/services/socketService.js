@@ -11,7 +11,7 @@ let socket = null;
 export const getSocket = () => {
   if (socket) return socket;
 
-  const serverUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+  const serverUrl = import.meta.env.VITE_SOCKET_URL || 'https://re-gadgets-backend.vercel.app';
   const token = useAuthStore.getState().accessToken;
 
   socket = io(serverUrl, {
@@ -74,35 +74,7 @@ export const onStatusUpdate = (callback) => {
 /**
  * Graceful Fallback Polling Engine
  * If WebSocket fails to connect or disconnects unexpectedly,
- * client components (such as Tracking.jsx) should call this to poll the order details.
- * 
- * Example usage pattern in Tracking.jsx:
- * 
- * useEffect(() => {
- *   let intervalId = null;
- * 
- *   // 1. Try socket connection
- *   connectSocket();
- *   joinOrderRoom(orderId);
- *   onStatusUpdate((data) => {
- *     setOrder(prev => ({ ...prev, status: data.status, estimatedCompletionTime: data.estimatedCompletionTime }));
- *   });
- * 
- *   // 2. Listen for socket failures to trigger fallback polling
- *   const s = getSocket();
- *   s.on('connect_error', () => {
- *     if (!intervalId) {
- *       intervalId = startPollingOrder(orderId, (updatedOrder) => {
- *         setOrder(updatedOrder);
- *       });
- *     }
- *   });
- * 
- *   return () => {
- *     disconnectSocket();
- *     if (intervalId) clearInterval(intervalId);
- *   };
- * }, [orderId]);
+ * client components (such as Tracking.jsx) call this to poll the order details via REST.
  * 
  * @param {string} orderId 
  * @param {function} callback - Receives the fresh Order object from REST response
