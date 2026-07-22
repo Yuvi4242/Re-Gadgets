@@ -1,9 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Settings, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const MessageBubble = ({ message }) => {
+const MessageBubble = ({ message, onAction, onCloseChat }) => {
   const isAI = message.sender === 'ai';
+  const navigate = useNavigate();
+
+  const handleButtonClick = (actionType) => {
+    if (onAction) {
+      onAction(actionType);
+      return;
+    }
+
+    if (actionType === 'BOOK_REPAIR') {
+      if (onCloseChat) onCloseChat();
+      navigate('/book-repair');
+    } else if (actionType === 'TRACK_ORDER') {
+      if (onCloseChat) onCloseChat();
+      navigate('/tracking');
+    }
+  };
 
   // Typing Indicator Variant
   if (message.isTyping) {
@@ -60,17 +77,26 @@ const MessageBubble = ({ message }) => {
                {message.actionContext && (
                   <div className="mt-4 border-t border-white/10 pt-3 flex flex-wrap gap-2">
                      {message.actionContext === 'BOOK_REPAIR' && (
-                        <button className="flex-1 min-w-[120px] bg-gradient-to-r from-emerald-500 to-emerald-400 text-black font-bold text-[11px] py-2 px-3 rounded-lg shadow-[0_5px_15px_rgba(52,211,153,0.4)] hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] hover:scale-[1.02] transition-all">
+                        <button 
+                          onClick={() => handleButtonClick('BOOK_REPAIR')}
+                          className="flex-1 min-w-[120px] bg-gradient-to-r from-emerald-500 to-emerald-400 text-black font-bold text-[11px] py-2 px-3 rounded-lg shadow-[0_5px_15px_rgba(52,211,153,0.4)] hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                        >
                           Book a Repair Now 🚀
                         </button>
                      )}
                      {message.actionContext === 'TRACK_ORDER' && (
-                        <button className="flex-1 min-w-[120px] bg-gradient-to-r from-brandPurple to-brandBlue text-white font-bold text-[11px] py-2 px-3 rounded-lg shadow-[0_5px_15px_rgba(79,70,229,0.4)] hover:shadow-[0_0_20px_rgba(79,70,229,0.6)] hover:scale-[1.02] transition-all">
+                        <button 
+                          onClick={() => handleButtonClick('TRACK_ORDER')}
+                          className="flex-1 min-w-[120px] bg-gradient-to-r from-brandPurple to-brandBlue text-white font-bold text-[11px] py-2 px-3 rounded-lg shadow-[0_5px_15px_rgba(79,70,229,0.4)] hover:shadow-[0_0_20px_rgba(79,70,229,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                        >
                           Track Active Order 📦
                         </button>
                      )}
                      {message.actionContext === 'CHECK_PRICE' && (
-                        <button className="flex-1 min-w-[120px] bg-white/10 text-white font-bold text-[11px] py-2 px-3 rounded-lg border border-white/20 hover:bg-white/20 hover:scale-[1.02] transition-all">
+                        <button 
+                          onClick={() => handleButtonClick('CHECK_PRICE')}
+                          className="flex-1 min-w-[120px] bg-white/10 text-white font-bold text-[11px] py-2 px-3 rounded-lg border border-white/20 hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                        >
                           View Pricing 💰
                         </button>
                      )}

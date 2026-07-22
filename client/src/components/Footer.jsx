@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Twitter, Instagram, Linkedin, Github } from 'lucide-react';
+import { Linkedin, Github } from 'lucide-react';
 
 const footerLinks = {
-  Product:  ['Book a Repair', 'Live Tracking', 'AI Diagnostics', 'Pricing'],
-  Company:  ['About Us', 'Careers', 'Blog', 'Contact'],
+  Product: ['Book a Repair', 'Live Tracking', 'AI Diagnostics', 'Pricing'],
+  Company: ['About Us', 'Careers', 'Blog', 'Contact'],
   Platform: ['Shop Owner Login', 'Technician Portal', 'API Docs', 'Status'],
 };
 
@@ -25,7 +24,6 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 relative z-10">
         {/* Main footer grid */}
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-16">
-
           {/* Brand column */}
           <div>
             <Link to="/" className="inline-flex items-center gap-3 mb-5 group">
@@ -41,15 +39,16 @@ const Footer = () => {
             </p>
             <div className="flex gap-3">
               {[
-                { icon: Twitter,   href: '#' },
-                { icon: Instagram, href: '#' },
-                { icon: Linkedin,  href: 'https://www.linkedin.com/in/yuvi42/' },
-                { icon: Github,    href: '#' },
-              ].map(({ icon: Icon, href }, i) => (
+                { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/yuvi42/' },
+                { name: 'GitHub', icon: Github, href: 'https://github.com/Yuvi4242' },
+              ].map(({ name, icon: Icon, href }, i) => (
                 <a
                   key={i}
                   href={href}
-                  className="w-9 h-9 rounded-full bg-[oklch(0.18_0.006_260)] border border-[oklch(0.28_0.008_260/0.6)] flex items-center justify-center text-[oklch(0.65_0.01_260)] hover:text-[oklch(0.65_0.19_35)] hover:border-[oklch(0.65_0.19_35/0.4)] transition-all"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={name}
+                  className="w-9 h-9 rounded-full bg-[oklch(0.18_0.006_260)] border border-[oklch(0.28_0.008_260/0.6)] flex items-center justify-center text-[oklch(0.65_0.01_260)] hover:text-[oklch(0.65_0.19_35)] hover:border-[oklch(0.65_0.19_35/0.4)] transition-all cursor-pointer"
                 >
                   <Icon className="w-4 h-4" />
                 </a>

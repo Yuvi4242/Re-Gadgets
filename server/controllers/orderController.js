@@ -62,7 +62,8 @@ export const getCustomerOrders = async (req, res) => {
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
     const skip = (page - 1) * limit;
 
-    const filter = { customer: req.user?._id || req.user?.id };
+    const userId = req.user?._id || req.user?.id;
+    const filter = { customer: userId };
 
     const [orders, total] = await Promise.all([
       Order.find(filter)
@@ -74,11 +75,53 @@ export const getCustomerOrders = async (req, res) => {
       Order.countDocuments(filter),
     ]);
 
-    // Bare array keeps existing frontend (dashboard.tsx) working.
-    // Pagination meta is available via response headers for newer clients.
-    res.set('X-Total-Count', String(total));
+    // Also fetch RepairBookings for this user to ensure all bookings are visible
+    const RepairBooking = (await import('../models/RepairBooking.js')).default;
+    const userPhone = req.user?.phone;
+    const bookingFilter = {
+      $or: [
+        { customer: userId },
+        ...(userPhone ? [{ customerPhone: userPhone }] : []),
+      ],
+    };
+
+    const repairBookings = await RepairBooking.find(bookingFilter).sort({ createdAt: -1 });
+
+    const existingOrderIds = new Set(orders.map((o) => o._id.toString()));
+
+    for (const booking of repairBookings) {
+      if (!existingOrderIds.has(booking._id.toString())) {
+        const mappedStatus = booking.status === 'confirmed' ? 'Accepted' : 'Requested';
+        orders.push({
+          _id: booking._id,
+          customer: userId,
+          deviceType: booking.serviceType || 'Mobile Repair',
+          deviceModel: booking.deviceType || 'Gadget',
+          issue: booking.issueDescription,
+          pickupAddress: `${booking.customerName} (${booking.customerPhone}) - Shop: ${booking.shopName}`,
+          scheduledDate: booking.preferredDateTime,
+          price: booking.estimatedAmount || 500,
+          status: mappedStatus,
+          isPaid: booking.isPaid || false,
+          createdAt: booking.createdAt,
+          updatedAt: booking.updatedAt,
+          statusHistory: [
+            {
+              status: mappedStatus,
+              changedBy: userId || booking._id,
+              timestamp: booking.createdAt,
+            },
+          ],
+        });
+      }
+    }
+
+    // Sort combined list by newest first
+    orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    res.set('X-Total-Count', String(orders.length));
     res.set('X-Page', String(page));
-    res.set('X-Pages', String(Math.ceil(total / limit) || 1));
+    res.set('X-Pages', String(Math.ceil(orders.length / limit) || 1));
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
