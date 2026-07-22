@@ -144,19 +144,23 @@ const HeroSection = () => {
               initial={{ opacity: 0, x: -20, y: -10 }}
               animate={{ opacity: 1, x: 0, y: 0 }}
               transition={{ duration: 0.7, delay: 0.6 }}
-              animate={{ y: ['-8px', '8px'] }}
-              transition={{ duration: 4.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-              className="absolute top-3 left-0 z-30 w-52 backdrop-blur-xl bg-[oklch(0.18_0.006_260/0.85)] border border-[oklch(0.28_0.008_260/0.6)] rounded-2xl p-4 shadow-2xl"
+              className="absolute top-3 left-0 z-30 w-52"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-[oklch(0.65_0.19_35)] flex items-center justify-center shadow-[0_0_20px_oklch(0.65_0.19_35/0.5)] shrink-0">
-                  <span className="font-display font-black text-lg text-[oklch(0.98_0_0)]">4.9</span>
+              <motion.div
+                animate={{ y: ['-8px', '8px'] }}
+                transition={{ duration: 4.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                className="backdrop-blur-xl bg-[oklch(0.18_0.006_260/0.85)] border border-[oklch(0.28_0.008_260/0.6)] rounded-2xl p-4 shadow-2xl"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full bg-[oklch(0.65_0.19_35)] flex items-center justify-center shadow-[0_0_20px_oklch(0.65_0.19_35/0.5)] shrink-0">
+                    <span className="font-display font-black text-lg text-[oklch(0.98_0_0)]">4.9</span>
+                  </div>
+                  <div>
+                    <p className="font-display font-bold text-sm text-[oklch(0.96_0.005_260)] leading-tight">AVG RATING</p>
+                    <p className="font-mono text-[9px] uppercase tracking-wider text-[oklch(0.65_0.01_260)]">12k+ repairs</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-display font-bold text-sm text-[oklch(0.96_0.005_260)] leading-tight">AVG RATING</p>
-                  <p className="font-mono text-[9px] uppercase tracking-wider text-[oklch(0.65_0.01_260)]">12k+ repairs</p>
-                </div>
-              </div>
+              </motion.div>
             </motion.div>
 
             {/* Bottom-right overlap: AI card — amber filled, rotated */}
@@ -164,25 +168,29 @@ const HeroSection = () => {
               initial={{ opacity: 0, x: 20, y: 20 }}
               animate={{ opacity: 1, x: 0, y: 0 }}
               transition={{ duration: 0.7, delay: 0.7 }}
-              animate={{ y: ['10px', '-10px'] }}
-              transition={{ duration: 5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 1 }}
-              className="absolute bottom-4 right-0 z-30 w-52 bg-[oklch(0.78_0.16_75)] rounded-2xl p-4 shadow-[0_10px_40px_oklch(0.78_0.16_75/0.4)] hover:rotate-0 transition-all duration-500"
-              style={{ transform: 'rotate(3deg)' }}
+              className="absolute bottom-4 right-0 z-30 w-52"
             >
-              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[oklch(0.15_0.02_60/0.7)] mb-1">New</p>
-              <p className="font-display font-extrabold text-base text-[oklch(0.15_0.02_60)] leading-tight">AI-Diagnostic</p>
-              <p className="font-display font-extrabold text-base text-[oklch(0.15_0.02_60)]">2.0</p>
-              <div className="mt-3 flex items-center gap-1.5">
-                <div className="flex-1 h-1 bg-[oklch(0.15_0.02_60/0.2)] rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: '85%' }}
-                    transition={{ duration: 1.5, delay: 1.2 }}
-                    className="h-full bg-[oklch(0.15_0.02_60/0.6)] rounded-full"
-                  />
+              <motion.div
+                animate={{ y: ['10px', '-10px'] }}
+                transition={{ duration: 5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 1 }}
+                className="bg-[oklch(0.78_0.16_75)] rounded-2xl p-4 shadow-[0_10px_40px_oklch(0.78_0.16_75/0.4)] hover:rotate-0 transition-all duration-500"
+                style={{ transform: 'rotate(3deg)' }}
+              >
+                <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[oklch(0.15_0.02_60/0.7)] mb-1">New</p>
+                <p className="font-display font-extrabold text-base text-[oklch(0.15_0.02_60)] leading-tight">AI-Diagnostic</p>
+                <p className="font-display font-extrabold text-base text-[oklch(0.15_0.02_60)]">2.0</p>
+                <div className="mt-3 flex items-center gap-1.5">
+                  <div className="flex-1 h-1 bg-[oklch(0.15_0.02_60/0.2)] rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: '85%' }}
+                      transition={{ duration: 1.5, delay: 1.2 }}
+                      className="h-full bg-[oklch(0.15_0.02_60/0.6)] rounded-full"
+                    />
+                  </div>
+                  <span className="font-mono text-[9px] font-bold text-[oklch(0.15_0.02_60/0.7)]">85%</span>
                 </div>
-                <span className="font-mono text-[9px] font-bold text-[oklch(0.15_0.02_60/0.7)]">85%</span>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>

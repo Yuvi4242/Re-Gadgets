@@ -8,7 +8,8 @@ export const sendChatMessage = async (message, history) => {
        text: m.text
     }));
 
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const apiBase = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl.replace(/\/$/, '')}/api`;
     const response = await fetch(`${apiBase}/chat`, {
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },

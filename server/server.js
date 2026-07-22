@@ -19,6 +19,8 @@ import chatRoutes from './routes/chat.js';
 import workerRoutes from './routes/workerRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import repairBookingRoutes from './routes/repairBookingRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 import User from './models/userModel.js';
 import Order from './models/Order.js';
@@ -64,6 +66,8 @@ app.use('/api/shops', shopRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/repair-bookings', repairBookingRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api', workerRoutes);
 
 app.get('/api/health', (req, res) => {

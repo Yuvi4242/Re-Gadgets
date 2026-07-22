@@ -1,8 +1,13 @@
 import axios from 'axios';
 import useAuthStore from '../store/authStore.js';
 
+const getBaseURL = () => {
+  const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  return rawUrl.endsWith('/api') ? rawUrl : `${rawUrl.replace(/\/$/, '')}/api`;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: getBaseURL(),
   withCredentials: true, // IMPORTANT for sending httpOnly cookies (refreshToken)
 });
 

@@ -24,7 +24,7 @@ export const protect = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     // 3) Check if user still exists
-    const currentUser = await User.findById(decoded.userId);
+    const currentUser = await User.findById(decoded.userId || decoded.id);
     if (!currentUser) {
       return res.status(401).json({
         success: false,
@@ -49,11 +49,36 @@ export const protect = async (req, res, next) => {
   }
 };
 
+export const optionalAuth = async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const currentUser = await User.findById(decoded.userId || decoded.id);
+    if (currentUser) {
+      req.user = currentUser;
+    }
+  } catch (_) {
+    // Optional auth token verification failure can be silently ignored
+  }
+  next();
+};
+
 export const requireAuth = protect;
 
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
-    // roles ['admin', 'technician']...
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
