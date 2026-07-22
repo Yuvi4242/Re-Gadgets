@@ -1,13 +1,16 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "api/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.x"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "lint": "node --check server.js",
-    "test:smoke": "node --check server.js"
+    "lint": "node --check server.js app.js api/index.js",
+    "test:smoke": "node --check server.js app.js api/index.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.20.0",

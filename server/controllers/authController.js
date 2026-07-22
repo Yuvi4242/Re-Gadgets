@@ -139,7 +139,7 @@ export const login = asyncHandler(async (req, res, next) => {
   res.cookie('jwt', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 
@@ -199,7 +199,7 @@ export const googleLogin = asyncHandler(async (req, res, next) => {
   res.cookie('jwt', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -254,7 +254,7 @@ export const logout = asyncHandler(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
   }
 
-  res.clearCookie('jwt', { httpOnly: true, sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax', secure: process.env.NODE_ENV === 'production' });
+  res.clearCookie('jwt', { httpOnly: true, sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', secure: process.env.NODE_ENV === 'production' });
   res.status(200).json({ success: true, message: 'Logged out successfully' });
 });
 
