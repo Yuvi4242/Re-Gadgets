@@ -11,7 +11,7 @@ let socket = null;
 export const getSocket = () => {
   if (socket) return socket;
 
-  const serverUrl = import.meta.env.VITE_SOCKET_URL || 'https://re-gadgets-backend.vercel.app';
+  const serverUrl = import.meta.env.VITE_SOCKET_URL || 'https://re-gadgets.onrender.com';
   const token = useAuthStore.getState().accessToken;
 
   socket = io(serverUrl, {

@@ -2,7 +2,7 @@ import axios from 'axios';
 import useAuthStore from '../store/authStore.js';
 
 const getBaseURL = () => {
-  const rawUrl = import.meta.env.VITE_API_URL || 'https://re-gadgets-backend.vercel.app/api';
+  const rawUrl = import.meta.env.VITE_API_URL || 'https://re-gadgets.onrender.com/api';
   return rawUrl.endsWith('/api') ? rawUrl : `${rawUrl.replace(/\/$/, '')}/api`;
 };
 

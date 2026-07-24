@@ -29,7 +29,7 @@ app.use(helmet({
 // Allowed origins for CORS (Production + Local Dev)
 const allowedOrigins = [
   'https://re-gadgets.vercel.app',
-  'https://re-gadgets-backend.vercel.app',
+  'https://re-gadgets.onrender.com',
   process.env.CLIENT_URL,
   'http://localhost:5173',
   'http://localhost:3000',
@@ -38,11 +38,16 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl) or allowed origins
-      if (!origin || allowedOrigins.includes(origin) || allowedOrigins.some(o => origin.startsWith(o)) || process.env.NODE_ENV !== 'production') {
+      // Allow requests with no origin, matched origins, vercel preview subdomains, or dev env
+      if (
+        !origin || 
+        allowedOrigins.includes(origin) || 
+        /\.vercel\.app$/.test(origin) ||
+        process.env.NODE_ENV !== 'production'
+      ) {
         callback(null, true);
       } else {
-        callback(null, true);
+        callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
