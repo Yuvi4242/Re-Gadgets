@@ -112,20 +112,13 @@ let serverInstance = null;
 
 const startServer = async () => {
   try {
-    const dbConn = await connectDB();
-    if (process.env.NODE_ENV === 'test' && !dbConn) {
-      console.log('Test environment active without active database connection.');
-    }
+    await connectDB();
     serverInstance = httpServer.listen(PORT, () => {
       console.log(`Server running optimally on port ${PORT}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
-    if (process.env.NODE_ENV === 'test') {
-      console.warn('Test environment: proceeding without terminating process.');
-    } else {
-      process.exit(1);
-    }
+    process.exit(1);
   }
 };
 

@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 
 const ShopOwnerProfileForm = ({ onSuccess }) => {
   const { api, completeUserProfile } = useAuth();
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm();
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
 
   const onSubmit = async (data) => {
     try {

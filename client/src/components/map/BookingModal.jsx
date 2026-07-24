@@ -63,9 +63,7 @@ export default function BookingModal({ shop, onClose }) {
             authHeader = { Authorization: `Bearer ${parsed.state.accessToken}` };
           }
         }
-      } catch {
-        // Ignore auth storage parse failure
-      }
+      } catch (_) {}
 
       const res = await fetch('/api/repair-bookings', {
         method: 'POST',

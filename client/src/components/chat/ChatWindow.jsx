@@ -9,18 +9,24 @@ import { sendChatMessage } from '../../services/aiService';
 import { useVoiceAssistant } from '../../hooks/useVoiceAssistant';
 
 const ChatWindow = ({ onClose }) => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hi! I'm the Re-Gadgets AI 🤖. Need help repairing your device or tracking an order?",
-      sender: 'ai',
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef(null);
-  const handleSendMessageRef = useRef(null);
   const navigate = useNavigate();
+
+  // Auto Greeting
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([
+        {
+          id: 1,
+          text: "Hi! I'm the Re-Gadgets AI 🤖. Need help repairing your device or tracking an order?",
+          sender: 'ai',
+        },
+      ]);
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,9 +38,7 @@ const ChatWindow = ({ onClose }) => {
 
   // Handle Speech STT completion wrapper
   const handleVoiceInput = useCallback((transcript) => {
-    if (handleSendMessageRef.current) {
-      handleSendMessageRef.current(transcript);
-    }
+    handleSendMessage(transcript);
   }, []);
 
   const { isListening, isSpeaking, startListening, stopListening, speak } = useVoiceAssistant(handleVoiceInput);
@@ -78,10 +82,6 @@ const ChatWindow = ({ onClose }) => {
       ]);
     }
   };
-
-  useEffect(() => {
-    handleSendMessageRef.current = handleSendMessage;
-  });
 
   const handleActionTrigger = (actionType) => {
     if (actionType === 'BOOK_REPAIR') {
@@ -170,7 +170,7 @@ const ChatWindow = ({ onClose }) => {
       {/* Chat Messages Area */}
       <div className="flex-1 overflow-y-auto p-5 pb-4 space-y-6 relative z-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <AnimatePresence>
-          {messages.map((msg) => (
+          {messages.map((msg, index) => (
             <MessageBubble
               key={msg.id}
               message={msg}

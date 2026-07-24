@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const posts = [
   {
     slug: 'future-of-ai-diagnostics',

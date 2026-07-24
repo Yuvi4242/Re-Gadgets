@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Bell, Check, Moon, Search, Sun, User, X, LogOut, Settings as SettingsIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../services/utils';
 import RoleBadge from './RoleBadge';
@@ -119,6 +121,7 @@ const CommandPalette = ({ role, open, onClose }) => {
 };
 
 export default function TopNavbar({ role }) {
+  const { theme } = useTheme();
   const { user, logout } = useAuth();
   const config = getRoleConfig(role);
   const [paletteOpen, setPaletteOpen] = useState(false);
