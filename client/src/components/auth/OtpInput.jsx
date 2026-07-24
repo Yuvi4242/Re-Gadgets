@@ -6,7 +6,9 @@ const OtpInput = ({ length = 6, value, onChange, error }) => {
 
   useEffect(() => {
     if (value === "") {
-        setOtp(new Array(length).fill(""));
+      queueMicrotask(() => {
+        setOtp((prev) => (prev.some((d) => d !== "") ? new Array(length).fill("") : prev));
+      });
     }
   }, [value, length]);
 

@@ -2,12 +2,12 @@ import React from 'react';
 import { motion, useSpring } from 'framer-motion';
 
 const AnimatedCursor = ({ cursorX, cursorY, isEnabled }) => {
-  if (!isEnabled) return null;
-
   // Tiny trailing effect for the "sparks" behind the main cursor
   const springConfig = { damping: 25, stiffness: 400, mass: 0.5 };
   const trailX = useSpring(cursorX, springConfig);
   const trailY = useSpring(cursorY, springConfig);
+
+  if (!isEnabled) return null;
 
   return (
     <>

@@ -41,18 +41,21 @@ const Footer = () => {
               {[
                 { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/yuvi42/' },
                 { name: 'GitHub', icon: Github, href: 'https://github.com/Yuvi4242' },
-              ].map(({ name, icon: Icon, href }, i) => (
-                <a
-                  key={i}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={name}
-                  className="w-9 h-9 rounded-full bg-[oklch(0.18_0.006_260)] border border-[oklch(0.28_0.008_260/0.6)] flex items-center justify-center text-[oklch(0.65_0.01_260)] hover:text-[oklch(0.65_0.19_35)] hover:border-[oklch(0.65_0.19_35/0.4)] transition-all cursor-pointer"
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.name}
+                    className="w-9 h-9 rounded-full bg-[oklch(0.18_0.006_260)] border border-[oklch(0.28_0.008_260/0.6)] flex items-center justify-center text-[oklch(0.65_0.01_260)] hover:text-[oklch(0.65_0.19_35)] hover:border-[oklch(0.65_0.19_35/0.4)] transition-all cursor-pointer"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 

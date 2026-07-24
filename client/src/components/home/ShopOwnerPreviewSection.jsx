@@ -89,7 +89,7 @@ const ShopOwnerPreviewSection = () => {
                   <span key={h} className="font-mono uppercase tracking-[0.14em] text-[9px] font-bold text-[oklch(0.65_0.01_260)]">{h}</span>
                 ))}
               </div>
-              {mockOrders.map((order, i) => (
+              {mockOrders.map((order) => (
                 <div
                   key={order.id}
                   className="grid grid-cols-[80px_1fr_1fr_120px_90px] gap-4 items-center px-5 py-4 border-b border-[oklch(0.28_0.008_260/0.3)] last:border-0 hover:bg-[oklch(0.22_0.006_260/0.5)] hover:border-l-2 hover:border-l-[oklch(0.65_0.19_35)] transition-all duration-150 group"

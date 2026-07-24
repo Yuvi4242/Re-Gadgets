@@ -40,7 +40,9 @@ export default function PaymentButton({ bookingId, amount, customerName, custome
             const textErr = await orderRes.text();
             if (textErr) errMsg = textErr;
           }
-        } catch (_) {}
+        } catch {
+          // Ignore JSON parse errors for error response
+        }
         throw new Error(errMsg);
       }
 

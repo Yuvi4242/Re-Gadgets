@@ -53,19 +53,15 @@ const Tracking = () => {
   const orderId = searchParams.get('id');
 
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(() => !!orderId);
+  const [error, setError] = useState(() => !orderId ? 'Please provide a valid Order ID in the URL parameter (e.g. /tracking?id=...)' : '');
 
   const [agentPos, setAgentPos] = useState([40.7128, -74.0060]);
   const [destPos, setDestPos] = useState([40.7282, -73.9942]);
 
   // 1. Fetch initial order details
   useEffect(() => {
-    if (!orderId) {
-      setError('Please provide a valid Order ID in the URL parameter (e.g. /tracking?id=...)');
-      setLoading(false);
-      return;
-    }
+    if (!orderId) return;
 
     const fetchOrder = async () => {
       try {
@@ -165,7 +161,7 @@ const Tracking = () => {
     frameId = requestAnimationFrame(animate);
 
     return () => cancelAnimationFrame(frameId);
-  }, [order?.status, destPos]);
+  }, [order?.status, order, destPos]);
 
   if (loading) {
     return (

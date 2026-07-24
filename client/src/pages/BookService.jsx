@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Smartphone, Laptop, Tv, Wind, MapPin, Calendar, ArrowRight, CheckCircle2, Navigation, AlertCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createOrder } from '../services/orderService';
@@ -168,9 +168,7 @@ const BookService = () => {
                           : 'border-white/5 hover:border-white/20 bg-[#121c33]/50 hover:bg-[#121c33] shadow-md'}`}
                     >
                       {/* Hover / Selected Glow */}
-                      {(isSelected || true) && (
-                         <div className={`absolute inset-0 bg-gradient-to-br from-brandBlue to-brandPurple opacity-0 ${isSelected ? 'opacity-10' : 'group-hover:opacity-5'} transition-opacity duration-500`} />
-                      )}
+                      <div className={`absolute inset-0 bg-gradient-to-br from-brandBlue to-brandPurple opacity-0 ${isSelected ? 'opacity-10' : 'group-hover:opacity-5'} transition-opacity duration-500`} />
 
                       <div className={`p-4 rounded-2xl transition-all duration-500 relative z-10 ${isSelected ? `bg-gradient-to-br ${device.bg} shadow-[0_0_20px_rgba(56,189,248,0.4)] rotate-12 scale-110 text-white` : `bg-[#060e20] ${device.color} shadow-inner group-hover:rotate-12`}`}>
                         <Icon className="w-8 h-8" strokeWidth={2.5}/>

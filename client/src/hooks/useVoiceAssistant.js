@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 export const useVoiceAssistant = (onTranscriptComplete) => {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [browserSupported, setBrowserSupported] = useState(true);
+  const [browserSupported] = useState(() => typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window));
 
   const recognitionRef = useRef(null);
   const synthRef = useRef(null);
@@ -17,8 +17,6 @@ export const useVoiceAssistant = (onTranscriptComplete) => {
         recognitionRef.current.continuous = false;
         recognitionRef.current.interimResults = false;
         recognitionRef.current.lang = 'en-IN'; // Perfect for Hinglish
-     } else {
-        setBrowserSupported(false);
      }
   }, []);
 
@@ -38,7 +36,7 @@ export const useVoiceAssistant = (onTranscriptComplete) => {
      
      try {
        recognitionRef.current.start();
-     } catch (err) {
+     } catch {
        console.log('Recognition already started');
      }
   }, [onTranscriptComplete]);
