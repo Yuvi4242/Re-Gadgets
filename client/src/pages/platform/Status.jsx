@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Activity, CheckCircle2, AlertTriangle, XCircle, Clock } from 'lucide-react';
 
 const services = [

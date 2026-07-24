@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MessageBubble from './MessageBubble';

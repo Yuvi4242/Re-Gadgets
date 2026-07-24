@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Laptop, Tv, Wind, MapPin, Calendar, ArrowRight, CheckCircle2, Navigation, AlertCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createOrder } from '../services/orderService';
