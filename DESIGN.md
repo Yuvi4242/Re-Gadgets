@@ -259,7 +259,7 @@ Re-Gadgets v2 enforces two explicit density modes to ensure operational pages fe
 
 ## 11. Accessibility Baseline (WCAG 2.1 AA Compliance)
 
-1. **Color Contrast**:
+1. **Color Contrast**: It is Real Alpha
    - `text-primary` (`#F8FAFC`) on `#020617` base: **18.2:1** (Passes AAA).
    - `text-secondary` (`#94A3B8`) on `#0B1120` card surface: **7.2:1** (Passes AAA).
    - Flat Violet Accent (`#7C3AED`) on white button text: **4.8:1** (Passes AA).
