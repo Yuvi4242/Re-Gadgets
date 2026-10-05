@@ -140,11 +140,12 @@ const gracefulShutdown = async (signal) => {
   }
 };
 
-// Only run server.listen in non-Vercel environment
-if (!process.env.VERCEL) {
+// Only run server.listen in non-Vercel and non-test environments
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
   process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
   process.on('SIGINT', () => gracefulShutdown('SIGINT'));
   startServer();
 }
 
+export { startServer, gracefulShutdown, httpServer, io };
 export default app;
