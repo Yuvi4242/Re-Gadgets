@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Tag, Share2 } from 'lucide-react';
-import { posts } from './Blog';
+import { posts } from '../../data/blogPosts';
 
 const BlogPost = () => {
   const { slug } = useParams();

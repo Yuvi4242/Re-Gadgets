@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useAnimation, useMotionValue } from 'framer-motion';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { X } from 'lucide-react';
 import ChatWindow from './ChatWindow';
 import RobotAssistant from './RobotAssistant';
@@ -9,6 +9,7 @@ const ChatBot = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [robotState, setRobotState] = useState('idle');
+  const [gaze, setGaze] = useState({ x: 0, y: 0 });
   const constraintsRef = useRef(null);
   const btnRef = useRef(null);
 
@@ -24,6 +25,20 @@ const ChatBot = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  useEffect(() => {
+    if (isHovered && !isDragging && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      setGaze({
+        x: (mousePos.x - centerX) * 0.15,
+        y: (mousePos.y - centerY) * 0.15,
+      });
+    } else {
+      setGaze({ x: 0, y: 0 });
+    }
+  }, [mousePos, isHovered, isDragging]);
 
   const handleDragStart = () => {
     setIsDragging(true);
@@ -46,16 +61,8 @@ const ChatBot = () => {
     }
   };
 
-  // Calculate micro-movement tracking when hovered
-  let gazeX = 0;
-  let gazeY = 0;
-  if (isHovered && !isDragging && btnRef.current) {
-     const rect = btnRef.current.getBoundingClientRect();
-     const centerX = rect.left + rect.width / 2;
-     const centerY = rect.top + rect.height / 2;
-     gazeX = (mousePos.x - centerX) * 0.15; // 15% follow stretch
-     gazeY = (mousePos.y - centerY) * 0.15;
-  }
+  const gazeX = gaze.x;
+  const gazeY = gaze.y;
 
   return (
     <>

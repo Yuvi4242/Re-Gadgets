@@ -168,9 +168,7 @@ const BookService = () => {
                           : 'border-white/5 hover:border-white/20 bg-[#121c33]/50 hover:bg-[#121c33] shadow-md'}`}
                     >
                       {/* Hover / Selected Glow */}
-                      {(isSelected || true) && (
-                         <div className={`absolute inset-0 bg-gradient-to-br from-brandBlue to-brandPurple opacity-0 ${isSelected ? 'opacity-10' : 'group-hover:opacity-5'} transition-opacity duration-500`} />
-                      )}
+                      <div className={`absolute inset-0 bg-gradient-to-br from-brandBlue to-brandPurple opacity-0 ${isSelected ? 'opacity-10' : 'group-hover:opacity-5'} transition-opacity duration-500`} />
 
                       <div className={`p-4 rounded-2xl transition-all duration-500 relative z-10 ${isSelected ? `bg-gradient-to-br ${device.bg} shadow-[0_0_20px_rgba(56,189,248,0.4)] rotate-12 scale-110 text-white` : `bg-[#060e20] ${device.color} shadow-inner group-hover:rotate-12`}`}>
                         <Icon className="w-8 h-8" strokeWidth={2.5}/>
@@ -298,7 +296,7 @@ const BookService = () => {
                       className="h-44 rounded-[1.5rem] bg-[#020617] border border-white/10 relative overflow-hidden flex items-center justify-center group cursor-pointer shadow-inner"
                    >
                      {/* Map Image (Filtered to Dark) */}
-                     <div className="absolute inset-0 bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=San+Francisco,CA&zoom=14&size=600x300&maptype=roadmap&key=YOUR_API_KEY_HERE')] bg-cover bg-center opacity-40 mix-blend-screen grayscale group-hover:opacity-60 transition-all duration-700 scale-105 group-hover:scale-100"></div>
+                     <div className="absolute inset-0 bg-[url('https://a.basemaps.cartocdn.com/dark_all/13/2413/3079.png')] bg-cover bg-center opacity-40 mix-blend-screen grayscale group-hover:opacity-60 transition-all duration-700 scale-105 group-hover:scale-100"></div>
                      <div className="absolute inset-0 bg-brandBlue/10 mix-blend-overlay"></div>
                      
                      <motion.div 

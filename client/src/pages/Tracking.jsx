@@ -53,23 +53,23 @@ const Tracking = () => {
   const orderId = searchParams.get('id');
 
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(() => Boolean(orderId));
+  const [error, setError] = useState(() =>
+    !orderId ? 'Please provide a valid Order ID in the URL parameter (e.g. /tracking?id=...)' : ''
+  );
 
   const [agentPos, setAgentPos] = useState([40.7128, -74.0060]);
   const [destPos, setDestPos] = useState([40.7282, -73.9942]);
 
   // 1. Fetch initial order details
   useEffect(() => {
-    if (!orderId) {
-      setError('Please provide a valid Order ID in the URL parameter (e.g. /tracking?id=...)');
-      setLoading(false);
-      return;
-    }
+    if (!orderId) return;
 
+    let isMounted = true;
     const fetchOrder = async () => {
       try {
         const data = await getOrderDetails(orderId);
+        if (!isMounted) return;
         setOrder(data);
         if (data.shopId?.locationCoordinates) {
           const lat = data.shopId.locationCoordinates.lat || 40.7282;
@@ -79,6 +79,7 @@ const Tracking = () => {
         }
         setLoading(false);
       } catch (err) {
+        if (!isMounted) return;
         console.error('Error loading order tracking:', err);
         setError('Order not found or access denied. Ensure you are logged in as the order owner.');
         setLoading(false);
@@ -86,6 +87,9 @@ const Tracking = () => {
     };
 
     fetchOrder();
+    return () => {
+      isMounted = false;
+    };
   }, [orderId]);
 
   // 2. Real-time updates via WebSockets (Socket.IO)

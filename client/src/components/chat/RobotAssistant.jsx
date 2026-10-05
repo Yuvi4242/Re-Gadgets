@@ -80,24 +80,30 @@ const RobotAssistant = ({ state = 'idle', size = 'normal' }) => {
        <AnimatePresence>
          {state === 'repairing' && (
            <>
-             {[...Array(5)].map((_, i) => (
+             {[
+                { x: -25, y: 18, rotate: 45, duration: 0.7, delay: 0.1 },
+                { x: 30, y: -20, rotate: 120, duration: 0.9, delay: 0.15 },
+                { x: -15, y: -28, rotate: 210, duration: 0.65, delay: 0.05 },
+                { x: 25, y: 22, rotate: 300, duration: 0.8, delay: 0.2 },
+                { x: 6, y: 32, rotate: 95, duration: 0.75, delay: 0.12 },
+              ].map((spark, i) => (
                 <motion.div
                   key={`spark-${i}`}
                   initial={{ opacity: 1, x: 10, y: 10, scale: 0 }}
                   animate={{ 
                     opacity: [1, 1, 0], 
-                    x: 10 + (Math.random() - 0.5) * 80, 
-                    y: 10 + (Math.random() - 0.5) * 80, 
+                    x: 10 + spark.x, 
+                    y: 10 + spark.y, 
                     scale: [0, 1.5, 0],
-                    rotate: [0, Math.random() * 360]
+                    rotate: [0, spark.rotate]
                   }}
-                  transition={{ duration: 0.6 + Math.random() * 0.4, repeat: Infinity, repeatDelay: Math.random() * 0.2 }}
+                  transition={{ duration: spark.duration, repeat: Infinity, repeatDelay: spark.delay }}
                   className="absolute z-50 text-yellow-300 text-lg blur-[0.5px] pointer-events-none drop-shadow-[0_0_5px_#fde047]"
                 >
                   ✨
                 </motion.div>
-             ))}
-           </>
+              ))}
+            </>
          )}
        </AnimatePresence>
 

@@ -9,24 +9,17 @@ import { sendChatMessage } from '../../services/aiService';
 import { useVoiceAssistant } from '../../hooks/useVoiceAssistant';
 
 const ChatWindow = ({ onClose }) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      text: "Hi! I'm the Re-Gadgets AI 🤖. Need help repairing your device or tracking an order?",
+      sender: 'ai',
+    },
+  ]);
   const [isTyping, setIsTyping] = useState(false);
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
-
-  // Auto Greeting
-  useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([
-        {
-          id: 1,
-          text: "Hi! I'm the Re-Gadgets AI 🤖. Need help repairing your device or tracking an order?",
-          sender: 'ai',
-        },
-      ]);
-    }
-  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,14 +29,9 @@ const ChatWindow = ({ onClose }) => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Handle Speech STT completion wrapper
-  const handleVoiceInput = useCallback((transcript) => {
-    handleSendMessage(transcript);
-  }, []);
+  const voiceRef = useRef({ isListening: false, speak: () => {} });
 
-  const { isListening, isSpeaking, startListening, stopListening, speak } = useVoiceAssistant(handleVoiceInput);
-
-  const handleSendMessage = async (text) => {
+  const handleSendMessage = useCallback(async (text) => {
     const messageText = text || inputText;
     if (!messageText || !messageText.trim()) return;
 
@@ -70,8 +58,8 @@ const ChatWindow = ({ onClose }) => {
 
       setMessages((prev) => [...prev, newAIMessage]);
 
-      if (isListening && aiResponse.reply) {
-        speak(aiResponse.reply);
+      if (voiceRef.current.isListening && aiResponse.reply) {
+        voiceRef.current.speak(aiResponse.reply);
       }
     } catch (error) {
       console.error('[ChatWindow] Error rendering response:', error);
@@ -81,7 +69,18 @@ const ChatWindow = ({ onClose }) => {
         { id: Date.now() + 1, text: 'Something went wrong, please try again. 🤖💥', sender: 'ai' },
       ]);
     }
-  };
+  }, [inputText, messages]);
+
+  // Handle Speech STT completion wrapper
+  const handleVoiceInput = useCallback((transcript) => {
+    handleSendMessage(transcript);
+  }, [handleSendMessage]);
+
+  const { isListening, isSpeaking, startListening, stopListening, speak } = useVoiceAssistant(handleVoiceInput);
+
+  useEffect(() => {
+    voiceRef.current = { isListening, speak };
+  }, [isListening, speak]);
 
   const handleActionTrigger = (actionType) => {
     if (actionType === 'BOOK_REPAIR') {
@@ -170,7 +169,7 @@ const ChatWindow = ({ onClose }) => {
       {/* Chat Messages Area */}
       <div className="flex-1 overflow-y-auto p-5 pb-4 space-y-6 relative z-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <AnimatePresence>
-          {messages.map((msg, index) => (
+          {messages.map((msg) => (
             <MessageBubble
               key={msg.id}
               message={msg}
