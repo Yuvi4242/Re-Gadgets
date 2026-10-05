@@ -148,3 +148,4 @@ npm run dev
 | `npm run build` | Compiles production assets | `client/` |
 | `npm run lint` | Runs static syntax checks | `client/` or `server/` |
 | `npm start` | Launches production app | `server/` |
+Architected and developed a full-stack on-demand gadget repair marketplace using React 19, Node.js, Express, and MongoDB, implementing 4 role-based dashboards (Customer, Shop, Technician, Admin) with JWT authentication and Google OAuth 2.0.
