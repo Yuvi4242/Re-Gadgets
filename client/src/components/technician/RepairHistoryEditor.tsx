@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Camera, ImagePlus, Save, Trash2 } from 'lucide-react';
+import { Camera, ImagePlus, Save, Trash2, Loader2 } from 'lucide-react';
+import { saveRepairHistory } from '../../services/orderService';
 
 type Photo = { name: string; url: string; file: File };
 
@@ -12,6 +13,7 @@ export default function RepairHistoryEditor({ job, onSave }: { job: any; onSave:
   const [cost, setCost] = useState('');
   const [warranty, setWarranty] = useState('');
   const [message, setMessage] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => () => {
     [...before, ...after].forEach(photo => URL.revokeObjectURL(photo.url));
@@ -33,6 +35,62 @@ export default function RepairHistoryEditor({ job, onSave }: { job: any; onSave:
       if (photo) URL.revokeObjectURL(photo.url);
       return current.filter((_, i) => i !== index);
     });
+  };
+
+  const compressPhoto = (file: File): Promise<string> => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read selected image'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Selected file is not a valid image'));
+      img.onload = () => {
+        const scale = Math.min(1, 1200 / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject(new Error('Image compression is not supported in this browser'));
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const handleSave = async () => {
+    if (saving) return;
+    if (!before.length || !after.length) {
+      setMessage('Add at least one before photo and one after photo.');
+      return;
+    }
+    if (before.length > 6 || after.length > 6) {
+      setMessage('Please add no more than 6 photos for each stage.');
+      return;
+    }
+    const orderId = job?._id || job?.id || job?.orderId;
+    if (!orderId) {
+      setMessage('Could not identify the repair booking. Reopen this job and try again.');
+      return;
+    }
+    try {
+      setSaving(true);
+      setMessage('');
+      const [beforePhotos, afterPhotos] = await Promise.all([
+        Promise.all(before.map(p => compressPhoto(p.file))),
+        Promise.all(after.map(p => compressPhoto(p.file))),
+      ]);
+      await saveRepairHistory(orderId, {
+        issue, servicesPerformed: services, replacedParts: parts,
+        repairCost: cost === '' ? null : Number(cost), warranty, beforePhotos, afterPhotos
+      });
+      setMessage('Repair record saved successfully.');
+      onSave({ issue, servicesPerformed: services, replacedParts: parts, repairCost: cost === '' ? null : Number(cost), warranty, beforePhotos, afterPhotos });
+    } catch (error: any) {
+      setMessage(error?.response?.data?.message || error?.message || 'Unable to save repair history.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const photoGroup = (type: 'before' | 'after', title: string, photos: Photo[]) => (
@@ -59,7 +117,7 @@ export default function RepairHistoryEditor({ job, onSave }: { job: any; onSave:
     <div><label className={labelClass}>Services performed</label><textarea value={services} onChange={e => setServices(e.target.value)} className={fieldClass} rows={2} placeholder="Diagnostics, repair work, final testing..." /></div>
     <div><label className={labelClass}>Replaced parts</label><textarea value={parts} onChange={e => setParts(e.target.value)} className={fieldClass} rows={2} placeholder="Part name and quantity" /></div>
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><div><label className={labelClass}>Total repair cost (₹)</label><input type="number" min="0" value={cost} onChange={e => setCost(e.target.value)} className={fieldClass} placeholder="0.00" /></div><div><label className={labelClass}>Warranty</label><input value={warranty} onChange={e => setWarranty(e.target.value)} className={fieldClass} placeholder="e.g. 90 days" /></div></div>
-    <button type="button" onClick={() => { onSave({ issue, servicesPerformed: services, replacedParts: parts, repairCost: cost === '' ? null : Number(cost), warranty, beforePhotos: before.map(p => p.file), afterPhotos: after.map(p => p.file) }); setMessage('Form data prepared. The existing repair-history API must receive these files to persist them.'); }} className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 px-4 py-3 font-bold text-black hover:bg-cyan-400"><Save className="h-4 w-4" /> Save repair record</button>
-    {message && <p className="text-xs leading-relaxed text-amber-300">{message}</p>}
+    <button type="button" disabled={saving} onClick={handleSave} className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 px-4 py-3 font-bold text-black hover:bg-cyan-400 disabled:cursor-wait disabled:opacity-60">{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}{saving ? 'Saving repair record…' : 'Save repair record'}</button>
+    {message && <p className="text-xs leading-relaxed text-emerald-300">{message}</p>}
   </section>;
 }
