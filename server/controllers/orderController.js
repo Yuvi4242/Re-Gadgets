@@ -525,3 +525,51 @@ export const createOrderReview = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+// Save a repair record and its before/after photos against the specific order.
+export const saveRepairHistory = async (req, res) => {
+  try {
+    const { issue, servicesPerformed, replacedParts, repairCost, warranty, beforePhotos = [], afterPhotos = [] } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+
+    const userId = String(req.user?._id || req.user?.id || '');
+    const role = req.user?.role;
+    let allowed = role === 'admin';
+    if (role === 'technician' && order.workerId) {
+      const worker = await Worker.findById(order.workerId);
+      allowed = String(worker?.userId || '') === userId;
+    }
+    if (role === 'shopOwner' && order.shopId) {
+      const shop = await Shop.findById(order.shopId);
+      allowed = String(shop?.userId || '') === userId;
+    }
+    if (!allowed) return res.status(403).json({ success: false, message: 'Only the assigned technician, shop owner, or admin can save repair history' });
+
+    const photosValid = (items) => Array.isArray(items) && items.length <= 6 &&
+      items.every(item => typeof item === 'string' && item.startsWith('data:image/') && item.length <= 1_500_000);
+    if (!photosValid(beforePhotos) || !photosValid(afterPhotos)) {
+      return res.status(400).json({ success: false, message: 'Upload up to 6 compressed images per stage (max 1.5 MB each)' });
+    }
+    if (repairCost !== null && repairCost !== undefined && (!Number.isFinite(Number(repairCost)) || Number(repairCost) < 0)) {
+      return res.status(400).json({ success: false, message: 'Repair cost must be a valid non-negative number' });
+    }
+    order.repairHistory.push({
+      issue: String(issue || order.issue || ''),
+      servicesPerformed: String(servicesPerformed || ''),
+      replacedParts: String(replacedParts || ''),
+      repairCost: repairCost === '' || repairCost == null ? null : Number(repairCost),
+      warranty: String(warranty || ''),
+      beforePhotos,
+      afterPhotos,
+      technician: req.user?._id || req.user?.id,
+      createdAt: new Date(),
+    });
+    if (repairCost !== '' && repairCost != null) order.price = Number(repairCost);
+    await order.save();
+    return res.status(201).json({ success: true, message: 'Repair history saved', repairHistory: order.repairHistory });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
