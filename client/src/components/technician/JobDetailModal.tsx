@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Play, Square, Pause, Save, CheckCircle2, Phone, MessageSquare, AlertTriangle, User, Share } from 'lucide-react';
+import { X, Play, Square, Pause, Save, CheckCircle2, Phone, MessageSquare, AlertTriangle, User, Share, Camera, FileText } from 'lucide-react';
+import RepairRecordForm from '../repair/RepairRecordForm';
 
 export default function JobDetailModal({ job, onClose, updateJob }: any) {
+  const [activeTab, setActiveTab] = useState<'record' | 'checklist'>('record');
   const [notes, setNotes] = useState(job.notes || '');
   const [timerRunning, setTimerRunning] = useState(false);
   const [elapsed, setElapsed] = useState(job.timeSpent || 0);
@@ -58,7 +60,45 @@ export default function JobDetailModal({ job, onClose, updateJob }: any) {
              </div>
           </div>
 
+          {/* Subheader Navigation Tabs */}
+          <div className="flex border-b border-white/10 bg-white/[0.02] px-6">
+            <button
+              onClick={() => setActiveTab('record')}
+              className={`py-3 px-4 font-bold text-xs flex items-center gap-2 border-b-2 transition-colors ${
+                activeTab === 'record'
+                  ? 'border-cyan-400 text-cyan-400'
+                  : 'border-transparent text-slate-400 hover:text-white'
+              }`}
+            >
+              <Camera className="w-4 h-4" />
+              Repair Record & Visual Proof
+            </button>
+            <button
+              onClick={() => setActiveTab('checklist')}
+              className={`py-3 px-4 font-bold text-xs flex items-center gap-2 border-b-2 transition-colors ${
+                activeTab === 'checklist'
+                  ? 'border-cyan-400 text-cyan-400'
+                  : 'border-transparent text-slate-400 hover:text-white'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              Overview & Checklist
+            </button>
+          </div>
+
           <div className="flex-1 overflow-y-auto no-scrollbar p-6">
+            {activeTab === 'record' ? (
+              <div className="max-w-4xl mx-auto">
+                <RepairRecordForm
+                  bookingId={job.id}
+                  deviceModel={job.device}
+                  initialIssue={job.issue}
+                  onSaved={(rec) => {
+                    if (updateJob) updateJob(job.id, { repairRecord: rec });
+                  }}
+                />
+              </div>
+            ) : (
              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 {/* Left Col (Main Info & Actions) */}
@@ -165,6 +205,7 @@ export default function JobDetailModal({ job, onClose, updateJob }: any) {
                 </div>
 
              </div>
+           )}
           </div>
        </motion.div>
     </div>

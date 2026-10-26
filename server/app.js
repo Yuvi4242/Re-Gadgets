@@ -16,8 +16,14 @@ import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import repairBookingRoutes from './routes/repairBookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import repairRecordRoutes from './routes/repairRecordRoutes.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -65,6 +71,9 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Static uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Main Application Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
@@ -73,6 +82,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/repair-bookings', repairBookingRoutes);
+app.use('/api/repair-records', repairRecordRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api', workerRoutes);
 

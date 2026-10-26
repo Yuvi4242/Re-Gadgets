@@ -10,7 +10,9 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "lint": "node --check server.js app.js api/index.js",
-    "test:smoke": "node --check server.js app.js api/index.js"
+    "test:smoke": "node --check server.js app.js api/index.js",
+    "test": "node --test tests/repairRecord.test.js",
+    "migrate": "node migrations/20261027_add_repair_records.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.20.0",

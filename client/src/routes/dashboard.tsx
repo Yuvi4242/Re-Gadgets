@@ -13,6 +13,8 @@ import {
 } from '../components/ui/DesignSystem';
 import { cn } from '../services/utils';
 import { getCustomerOrders } from '../services/orderService';
+import { getCustomerRepairHistory } from '../services/repairRecordService';
+import RepairHistoryCard from '../components/repair/RepairHistoryCard';
 
 // ── STATUS MAPPING HELPERS ──────────────────────────────────
 const getStatusTone = (status: string) => {
@@ -554,6 +556,117 @@ const OrderHistory = ({ history }: { history: any[] }) => {
   );
 };
 
+// E.2 Device Repair Service History with Side-by-Side Photos
+const CustomerDeviceRepairHistory = () => {
+  const [records, setRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedDevice, setSelectedDevice] = useState('ALL');
+
+  const fetchHistory = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await getCustomerRepairHistory();
+      setRecords(data);
+    } catch (err: any) {
+      console.error('Error fetching repair history:', err);
+      setError('Unable to load your device repair service history.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const deviceModels = Array.from(new Set(records.map((r) => r.deviceModel).filter(Boolean)));
+  const filteredRecords = selectedDevice === 'ALL'
+    ? records
+    : records.filter((r) => r.deviceModel === selectedDevice);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <SectionEyebrow color="ember">Device Service Records</SectionEyebrow>
+          <h3 className="font-display font-bold text-2xl text-[oklch(0.96_0.005_260)] tracking-tight">
+            Repair History & Visual Proof
+          </h3>
+          <p className="text-xs text-[oklch(0.65_0.01_260)] mt-1">
+            Complete records of previous issues, replaced parts, warranties, and before & after photos for your devices.
+          </p>
+        </div>
+
+        {deviceModels.length > 1 && (
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs text-[oklch(0.65_0.01_260)]">Device:</span>
+            <select
+              value={selectedDevice}
+              onChange={(e) => setSelectedDevice(e.target.value)}
+              className="px-3 py-1.5 rounded-xl bg-[oklch(0.18_0.006_260)] border border-[oklch(0.28_0.008_260/0.6)] text-xs text-white outline-none font-bold"
+            >
+              <option value="ALL">All Devices ({records.length})</option>
+              {deviceModels.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {loading && (
+        <div className="p-12 rounded-2xl border border-[oklch(0.28_0.008_260/0.5)] bg-[oklch(0.18_0.006_260/0.5)] flex flex-col items-center justify-center space-y-3">
+          <Loader2 className="w-8 h-8 text-[oklch(0.65_0.19_35)] animate-spin" />
+          <p className="font-mono text-xs uppercase tracking-wider text-[oklch(0.65_0.01_260)]">
+            Retrieving device repair records...
+          </p>
+        </div>
+      )}
+
+      {error && !loading && (
+        <div className="p-6 rounded-2xl border border-red-500/20 bg-red-500/10 flex items-center justify-between">
+          <div className="flex items-center gap-3 text-red-400 text-sm">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={fetchHistory}
+            className="px-4 py-1.5 rounded-lg bg-[oklch(0.18_0.006_260)] border border-white/10 text-white text-xs font-bold hover:border-white transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && filteredRecords.length > 0 && (
+        <div className="space-y-6">
+          {filteredRecords.map((rec) => (
+            <RepairHistoryCard key={rec._id} record={rec} />
+          ))}
+        </div>
+      )}
+
+      {!loading && !error && filteredRecords.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-[oklch(0.28_0.008_260/0.5)] bg-[oklch(0.18_0.006_260/0.3)] p-10 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[oklch(0.22_0.006_260)] flex items-center justify-center mx-auto text-[oklch(0.65_0.01_260)] border border-[oklch(0.28_0.008_260/0.6)]">
+            <Camera className="w-6 h-6 text-[oklch(0.65_0.19_35)]" />
+          </div>
+          <h4 className="font-display font-bold text-base text-[oklch(0.96_0.005_260)]">
+            No Device Repair History Yet
+          </h4>
+          <p className="text-xs text-[oklch(0.65_0.01_260)] max-w-md mx-auto">
+            When our certified technicians complete repairs on your devices, before and after photos, itemized parts, and warranty certificates will appear here.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // F. Invoices Section
 const InvoicesSection = ({ invoices, outstanding }: { invoices: any[]; outstanding: number }) => {
   const subtotal = outstanding > 0 ? outstanding * 0.9 : 0;
@@ -831,6 +944,9 @@ export default function CustomerDashboard() {
 
       {/* E. Order history table */}
       <OrderHistory history={historyOrders} />
+
+      {/* E.2 Device repair service history with side-by-side before and after photos */}
+      <CustomerDeviceRepairHistory />
 
       {/* F. Invoices block */}
       <InvoicesSection invoices={invoiceList} outstanding={outstandingBalance} />

@@ -10,6 +10,7 @@ import PerformancePanel from '../../components/technician/PerformancePanel';
 import SchedulePanel from '../../components/technician/SchedulePanel';
 import EarningsPanel from '../../components/technician/EarningsPanel';
 import ProfileResumePanel from '../../components/technician/ProfileResumePanel';
+import RepairHistoryPanel from '../../components/technician/RepairHistoryPanel';
 
 export default function TechnicianDashboard() {
   const { user } = useAuth();
@@ -35,6 +36,8 @@ export default function TechnicianDashboard() {
             <WorkbenchKanban />
           </>
         );
+      case 'history':
+        return <RepairHistoryPanel />;
       case 'parts':
         return <PartsRequestPanel />;
       case 'performance':
@@ -46,7 +49,7 @@ export default function TechnicianDashboard() {
       case 'profile':
         return <ProfileResumePanel />;
       default:
-        // 'jobs', 'history', 'manuals', 'settings'
+        // 'jobs', 'manuals', 'settings'
         return (
            <div className="h-[60vh] flex flex-col justify-center items-center text-center opacity-50 bg-[#0a0a1a]/40 backdrop-blur-xl border border-white/10 rounded-3xl">
               <h2 className="text-2xl font-bold text-white mb-2">Coming Soon</h2>

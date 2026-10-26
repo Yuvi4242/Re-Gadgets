@@ -25,6 +25,7 @@ const repairBookingSchema = new mongoose.Schema(
     isPaid: { type: Boolean, default: false },
     razorpayOrderId: String,
     razorpayPaymentId: String,
+    repairRecord: { type: mongoose.Schema.Types.ObjectId, ref: 'RepairRecord' },
   },
   { timestamps: true }
 );

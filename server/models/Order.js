@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
   price: { type: Number },
   estimatedCompletionTime: { type: Date },
   isPaid: { type: Boolean, default: false },
+  repairRecord: { type: mongoose.Schema.Types.ObjectId, ref: 'RepairRecord' },
   // Live GPS for technician tracking (Tracking.jsx listens via Socket.IO)
   currentLocation: {
     lat: { type: Number },
