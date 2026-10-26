@@ -24,6 +24,17 @@ const orderSchema = new mongoose.Schema({
     lng: { type: Number },
     updatedAt: { type: Date },
   },
+  repairHistory: [{
+    issue: { type: String, default: '' },
+    servicesPerformed: { type: String, default: '' },
+    replacedParts: { type: String, default: '' },
+    repairCost: { type: Number, default: null },
+    warranty: { type: String, default: '' },
+    beforePhotos: [{ type: String }],
+    afterPhotos: [{ type: String }],
+    technician: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    createdAt: { type: Date, default: Date.now },
+  }],
   statusHistory: [
     {
       status: { type: String, required: true },

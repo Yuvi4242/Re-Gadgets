@@ -40,3 +40,8 @@ export const updateOrderLocation = async (orderId, { lat, lng }) => {
   const response = await api.patch(`/orders/${orderId}/location`, { lat, lng });
   return response.data;
 };
+
+export const saveRepairHistory = async (orderId, record) => {
+  const response = await api.post(`/orders/${orderId}/repair-history`, record);
+  return response.data;
+};

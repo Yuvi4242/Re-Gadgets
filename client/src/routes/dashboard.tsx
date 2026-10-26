@@ -942,6 +942,45 @@ export default function CustomerDashboard() {
       {/* D. Live tracking panel scoped to selected active repair */}
       {selectedRepair && <CustomerTracking repair={selectedRepair} />}
 
+
+      {/* Repair history: saved technician notes, costs, warranty and photo comparisons */}
+      <section className="space-y-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[oklch(0.65_0.19_35)]">Service records</p>
+          <h2 className="mt-2 text-2xl font-extrabold text-white">Repair history & before/after photos</h2>
+          <p className="mt-1 text-sm text-[oklch(0.65_0.01_260)]">Your saved repair records, parts, costs and warranty details.</p>
+        </div>
+        {orders.filter((order: any) => Array.isArray(order.repairHistory) && order.repairHistory.length > 0).length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.03] p-6 text-sm text-[oklch(0.65_0.01_260)]">
+            No technician repair records have been added yet. Once your technician saves a service record, it will appear here.
+          </div>
+        ) : orders.flatMap((order: any) => (order.repairHistory || []).map((record: any, index: number) => (
+          <article key={String(order._id) + '-' + index} className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="font-bold text-white">{order.deviceModel || order.deviceType || 'Device repair'}</h3>
+                <p className="mt-1 text-xs text-[oklch(0.65_0.01_260)]">Booking #{String(order._id).slice(-8).toUpperCase()} · {record.createdAt ? new Date(record.createdAt).toLocaleDateString() : new Date(order.updatedAt || order.createdAt).toLocaleDateString()}</p>
+              </div>
+              {record.repairCost != null && <span className="rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-bold text-emerald-300">₹{Number(record.repairCost).toLocaleString('en-IN')}</span>}
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {([{ title: 'Before repair', photos: record.beforePhotos || [] }, { title: 'After repair', photos: record.afterPhotos || [] }] as any[]).map((group: any) => (
+                <div key={group.title}>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">{group.title}</p>
+                  {group.photos.length ? <div className="grid grid-cols-2 gap-2">{group.photos.map((src: string, photoIndex: number) => <a key={photoIndex} href={src} target="_blank" rel="noreferrer" className="block aspect-square overflow-hidden rounded-xl border border-white/10"><img src={src} alt={group.title + ' photo ' + (photoIndex + 1)} loading="lazy" className="h-full w-full object-cover transition-transform hover:scale-105" /></a>)}</div> : <div className="rounded-xl border border-dashed border-white/10 p-6 text-center text-xs text-slate-500">No photos</div>}
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="rounded-xl bg-black/20 p-3"><p className="text-xs font-bold text-slate-500">Reported issue</p><p className="mt-1 whitespace-pre-wrap text-sm text-slate-200">{record.issue || order.issue || '—'}</p></div>
+              <div className="rounded-xl bg-black/20 p-3"><p className="text-xs font-bold text-slate-500">Services performed</p><p className="mt-1 whitespace-pre-wrap text-sm text-slate-200">{record.servicesPerformed || '—'}</p></div>
+              <div className="rounded-xl bg-black/20 p-3"><p className="text-xs font-bold text-slate-500">Replaced parts</p><p className="mt-1 whitespace-pre-wrap text-sm text-slate-200">{record.replacedParts || '—'}</p></div>
+              <div className="rounded-xl bg-black/20 p-3"><p className="text-xs font-bold text-slate-500">Warranty</p><p className="mt-1 whitespace-pre-wrap text-sm text-slate-200">{record.warranty || 'Not specified'}</p></div>
+            </div>
+          </article>
+        )))}
+      </section>
+
       {/* E. Order history table */}
       <OrderHistory history={historyOrders} />
 
