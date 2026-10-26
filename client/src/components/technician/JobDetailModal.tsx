@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import RepairHistoryEditor from './RepairHistoryEditor';
 import { X, Play, Square, Pause, Save, CheckCircle2, Phone, MessageSquare, AlertTriangle, User, Share } from 'lucide-react';
 
 export default function JobDetailModal({ job, onClose, updateJob }: any) {
@@ -85,6 +86,8 @@ export default function JobDetailModal({ job, onClose, updateJob }: any) {
                         </div>
                       </div>
                    </div>
+
+                   <RepairHistoryEditor job={job.raw || job} onSave={(record) => updateJob(job.id, record)} />
 
                    <div className="space-y-3">
                      <div className="flex items-center justify-between">
